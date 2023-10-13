@@ -2,10 +2,11 @@
 #define slic3r_GCodeSender_hpp_
 
 #include "libslic3r.h"
+#include <boost/asio.hpp>
+#include <list>
 #include <queue>
 #include <string>
 #include <vector>
-#include <boost/asio.hpp>
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 107300
@@ -13,10 +14,12 @@
 #else
 #include <boost/bind.hpp>
 #endif
-#include <boost/thread.hpp>
 #include <boost/core/noncopyable.hpp>
+#include <mutex>
+#include <thread>
 
-namespace Slic3r {
+namespace Slic3r
+{
 
 namespace asio = boost::asio;
 
@@ -25,8 +28,9 @@ using boost::placeholders::_1;
 using boost::placeholders::_2;
 #endif
 
-class GCodeSender : private boost::noncopyable {
-    public:
+class GCodeSender : private boost::noncopyable
+{
+public:
     GCodeSender();
     ~GCodeSender();
     bool connect(std::string devname, unsigned int baud_rate);
@@ -45,41 +49,41 @@ class GCodeSender : private boost::noncopyable {
     std::string getB() const;
     void set_DTR(bool on);
     void reset();
-    
-    private:
+
+private:
     asio::io_service io;
     asio::serial_port serial;
-    boost::thread background_thread;
+    std::thread background_thread;
     boost::asio::streambuf read_buffer, write_buffer;
     bool open;      // whether the serial socket is connected
     bool connected; // whether the printer is online
     bool error;
-    mutable boost::mutex error_mutex;
-    
+    mutable std::mutex error_mutex;
+
     // this mutex guards queue, priqueue, can_send, queue_paused, sent, last_sent
-    mutable boost::mutex queue_mutex;
+    mutable std::mutex queue_mutex;
     std::queue<std::string> queue;
     std::list<std::string> priqueue;
     bool can_send;
     bool queue_paused;
     size_t sent;
     std::vector<std::string> last_sent;
-    
+
     // this mutex guards log, T, B
-    mutable boost::mutex log_mutex;
+    mutable std::mutex log_mutex;
     std::queue<std::string> log;
     std::string T, B;
-    
+
     void set_baud_rate(unsigned int baud_rate);
     void set_error_status(bool e);
     void do_send();
-    void on_write(const boost::system::error_code& error, size_t bytes_transferred);
+    void on_write(const boost::system::error_code &error, size_t bytes_transferred);
     void do_close();
     void do_read();
-    void on_read(const boost::system::error_code& error, size_t bytes_transferred);
+    void on_read(const boost::system::error_code &error, size_t bytes_transferred);
     void send();
 };
 
-}
+} // namespace Slic3r
 
 #endif

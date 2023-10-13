@@ -3,11 +3,8 @@ project (slic3r)
 
 set(PROJECT_VERSION 2.0.1)
 set(CONTEXT_VERSION 1.2)
-
 set(CMAKE_CXX_STANDARD 20)
 
-option(Enable_GUI "Use the wxWidgets code in slic3r.cpp" OFF)
-option(GUI_BUILD_TESTS "Build tests for Slic3r GUI." ON)
 option(SLIC3R_BUILD_TESTS "Build tests for libslic3r." ON)
 option(SLIC3R_STATIC "Build and link Slic3r statically." ON)
 option(BUILD_EXTRUDE_TIN "Build and link the extrude-tin application." ON)
@@ -15,7 +12,6 @@ option(PROFILE "Build with gprof profiling output." ON)
 option(COVERAGE "Build with gcov code coverage profiling." ON)
 option(SLIC3R_DEBUG "Build with Slic3r's debug output" ON)
 
-# only on newer GCCs: -ftemplate-backtrace-limit=0
 add_compile_options(-ftemplate-backtrace-limit=0)
 add_compile_options(-DNO_PERL -DM_PI=3.14159265358979323846 -DHAS_BOOL -DNOGDI -DBOOST_ASIO_DISABLE_KQUEUE)
 if(SLIC3R_DEBUG)
@@ -98,8 +94,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 IF(CMAKE_HOST_APPLE)
     add_compile_options(-stdlib=libc++ -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_NO_CXX11_RVALUE_REFERENCES -DBOOST_THREAD_USES_MOVE)
     set(CMAKE_EXE_LINKER_FLAGS "-framework IOKit -framework CoreFoundation -lc++")
-ELSE(CMAKE_HOST_APPLE)
-#    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -L.")
 ENDIF(CMAKE_HOST_APPLE)
 
 
@@ -111,16 +105,8 @@ else(SLIC3R_STATIC)
     set(Boost_USE_STATIC_RUNTIME OFF)
 endif(SLIC3R_STATIC)
 
-
 find_package(Threads REQUIRED)
-
-set(Boost_NO_BOOST_CMAKE ON)
-find_package(Boost REQUIRED COMPONENTS system thread filesystem)
-
-if (NOT (${Boost_VERSION_STRING} VERSION_LESS "1.74.0"))
-    MESSAGE("Adding in boost::nowide")
-    find_package(Boost REQUIRED COMPONENTS system thread filesystem OPTIONAL_COMPONENTS nowide)
-endif()
+find_package(Boost REQUIRED )
 
 set(LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/xssrc/)
 set(GUI_LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/GUI/)
@@ -158,6 +144,7 @@ set(SLIC3R_INCLUDES
     ${POLY2TRI_INCLUDES}
     ${BSPLINE_INCLUDES}
 )
+
 set(LIBSLIC3R_INCLUDES
     ${LIBDIR}/libslic3r
     ${LIBDIR}/libslic3r/IO
@@ -237,6 +224,7 @@ add_library(libslic3r STATIC
     ${LIBDIR}/libslic3r/SupportMaterial.cpp
     ${LIBDIR}/libslic3r/utils.cpp
     ${LIBDIR}/libslic3r/miniz_extension.cpp
+    ${LIBDIR}/libslic3r/thread_group.h
 )
 target_compile_features(libslic3r PUBLIC cxx_std_11)
 target_include_directories(libslic3r SYSTEM PUBLIC ${SLIC3R_INCLUDES})
@@ -369,20 +357,6 @@ endif(SLIC3R_STATIC)
 set_target_properties(bthread PROPERTIES IMPORTED_LOCATION ${bthread_l})
 include_directories(${Boost_INCLUDE_DIRS})
 
-if (Enable_GUI)
-if(SLIC3R_STATIC)
-    set(wxWidgets_USE_STATIC ON)
-else(SLIC3R_STATIC)
-    set(wxWidgets_USE_STATIC OFF)
-endif(SLIC3R_STATIC)
-endif()
-
-if (Enable_GUI)
-find_package(OpenGL)
-set(wxWidgets_USE_UNICODE ON)
-find_package(wxWidgets COMPONENTS net gl html aui adv core base)
-endif()
-
 # Libraries that Libslic3r itself depends on.
 set(LIBSLIC3R_DEPENDS
     admesh
@@ -402,12 +376,11 @@ set(SLIC3R_GUI_INCLUDES
     ${LIBDIR}/slic3r/GUI
     ${GUI_LIBDIR}
     ${OPENGL_INCLUDE_DIR}
-    ${wxWidgets_INCLUDE}
 )
 
 find_package(Catch2 CONFIG REQUIRED)
 
-target_link_libraries (slic3r libslic3r ${LIBSLIC3R_DEPENDS})
+target_link_libraries (slic3r libslic3r ${LIBSLIC3R_DEPENDS} ${Boost_LIBRARIES})
 
 if (BUILD_EXTRUDE_TIN)
     add_executable(extrude-tin utils/extrude-tin.cpp)

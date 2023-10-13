@@ -19,7 +19,7 @@ template <Axis A> class TriangleMeshSlicer;
 typedef std::vector<TriangleMesh*> TriangleMeshPtrs;
 
 
-/// Interface to available statistics from the underlying mesh. 
+/// Interface to available statistics from the underlying mesh.
 struct mesh_stats {
     size_t number_of_facets {0};
     size_t number_of_parts {0};
@@ -112,7 +112,7 @@ class TriangleMesh
     void extrude_tin(float offset);
     void require_shared_vertices();
     void reverse_normals();
-    
+
     /// Return a copy of the vertex array defining this mesh.
     Pointf3s vertices();
 
@@ -138,32 +138,32 @@ class TriangleMesh
 
     /// Perform a cut of the mesh and put the output in upper and lower
     void cut(Axis axis, double z, TriangleMesh* upper, TriangleMesh* lower);
-	
+
 	/// Generate a mesh representing a cube with dimensions (x, y, z), with one corner at (0,0,0).
     static TriangleMesh make_cube(double x, double y, double z);
-	
-	/// Generate a mesh representing a cylinder of radius r and height h, with the base at (0,0,0). 
-	/// param[in] r Radius 
-	/// param[in] h Height 
-	/// param[in] fa Facet angle. A smaller angle produces more facets. Default value is 2pi / 360.  
+
+	/// Generate a mesh representing a cylinder of radius r and height h, with the base at (0,0,0).
+	/// param[in] r Radius
+	/// param[in] h Height
+	/// param[in] fa Facet angle. A smaller angle produces more facets. Default value is 2pi / 360.
     static TriangleMesh make_cylinder(double r, double h, double fa=(2*PI/360));
-	
-	/// Generate a mesh representing a sphere of radius rho, centered about (0,0,0). 
-	/// param[in] rho Distance from center to the shell of the sphere. 
-	/// param[in] fa Facet angle. A smaller angle produces more facets. Default value is 2pi / 360.  
+
+	/// Generate a mesh representing a sphere of radius rho, centered about (0,0,0).
+	/// param[in] rho Distance from center to the shell of the sphere.
+	/// param[in] fa Facet angle. A smaller angle produces more facets. Default value is 2pi / 360.
     static TriangleMesh make_sphere(double rho, double fa=(2*PI/360));
 
-    
+
     stl_file stl;
 	/// Whether or not this mesh has been repaired.
     bool repaired;
-    
+
     private:
 
-    /// Private constructor that is called from the public sphere. 
-    /// It doesn't do any bounds checking on points and operates on raw pointers, so we hide it. 
+    /// Private constructor that is called from the public sphere.
+    /// It doesn't do any bounds checking on points and operates on raw pointers, so we hide it.
     /// Other constructors can call this one!
-    TriangleMesh(const Pointf3* points, const Point3* facets, size_t n_facets); 
+    TriangleMesh(const Pointf3* points, const Point3* facets, size_t n_facets);
 
     /// Perform the mechanics of a stl copy
     void clone(const TriangleMesh& other);
@@ -198,7 +198,7 @@ typedef std::vector<IntersectionLine> IntersectionLines;
 typedef std::vector<IntersectionLine*> IntersectionLinePtrs;
 
 
-/// \brief Class for processing TriangleMesh objects. 
+/// \brief Class for processing TriangleMesh objects.
 template <Axis A>
 class TriangleMeshSlicer
 {
@@ -211,25 +211,25 @@ class TriangleMeshSlicer
     void slice(float z, ExPolygons* slices) const;
     void slice_facet(float slice_z, const stl_facet &facet, const int &facet_idx,
         const float &min_z, const float &max_z, std::vector<IntersectionLine>* lines,
-        boost::mutex* lines_mutex = NULL) const;
-    
+        std::mutex* lines_mutex = NULL) const;
+
 	/// \brief Splits the current mesh into two parts.
 	/// \param[in] z Coordinate plane to cut along.
 	/// \param[out] upper TriangleMesh object to add the mesh > z. NULL suppresses saving this.
 	/// \param[out] lower TriangleMesh object to save the mesh < z. NULL suppresses saving this.
     void cut(float z, TriangleMesh* upper, TriangleMesh* lower) const;
-    
+
     private:
     typedef std::vector< std::vector<int> > t_facets_edges;
     t_facets_edges facets_edges;
     stl_vertex* v_scaled_shared;
-    void _slice_do(size_t facet_idx, std::vector<IntersectionLines>* lines, boost::mutex* lines_mutex, const std::vector<float> &z) const;
+    void _slice_do(size_t facet_idx, std::vector<IntersectionLines>* lines, std::mutex* lines_mutex, const std::vector<float> &z) const;
     void _make_loops_do(size_t i, std::vector<IntersectionLines>* lines, std::vector<Polygons>* layers) const;
     void make_loops(std::vector<IntersectionLine> &lines, Polygons* loops) const;
     void make_expolygons(const Polygons &loops, ExPolygons* slices) const;
     void make_expolygons_simple(std::vector<IntersectionLine> &lines, ExPolygons* slices) const;
     void make_expolygons(std::vector<IntersectionLine> &lines, ExPolygons* slices) const;
-    
+
     float& _x(stl_vertex &vertex) const;
     float& _y(stl_vertex &vertex) const;
     float& _z(stl_vertex &vertex) const;
