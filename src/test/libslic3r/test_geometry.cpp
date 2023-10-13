@@ -1,5 +1,5 @@
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include "Point.hpp"
 #include "BoundingBox.hpp"
@@ -54,20 +54,20 @@ SCENARIO("Intersections of line segments"){
 Tests for unused methods still written in perl
 {
     my $polygon = Slic3r::Polygon->new(
-        [45919000, 515273900], [14726100, 461246400], [14726100, 348753500], [33988700, 315389800], 
-        [43749700, 343843000], [45422300, 352251500], [52362100, 362637800], [62748400, 369577600], 
-        [75000000, 372014700], [87251500, 369577600], [97637800, 362637800], [104577600, 352251500], 
-        [107014700, 340000000], [104577600, 327748400], [97637800, 317362100], [87251500, 310422300], 
-        [82789200, 309534700], [69846100, 294726100], [254081000, 294726100], [285273900, 348753500], 
+        [45919000, 515273900], [14726100, 461246400], [14726100, 348753500], [33988700, 315389800],
+        [43749700, 343843000], [45422300, 352251500], [52362100, 362637800], [62748400, 369577600],
+        [75000000, 372014700], [87251500, 369577600], [97637800, 362637800], [104577600, 352251500],
+        [107014700, 340000000], [104577600, 327748400], [97637800, 317362100], [87251500, 310422300],
+        [82789200, 309534700], [69846100, 294726100], [254081000, 294726100], [285273900, 348753500],
         [285273900, 461246400], [254081000, 515273900],
     );
-    
+
     # this points belongs to $polyline
     # note: it's actually a vertex, while we should better check an intermediate point
     my $point = Slic3r::Point->new(104577600, 327748400);
-    
+
     local $Slic3r::Geometry::epsilon = 1E-5;
-    is_deeply Slic3r::Geometry::polygon_segment_having_point($polygon, $point)->pp, 
+    is_deeply Slic3r::Geometry::polygon_segment_having_point($polygon, $point)->pp,
         [ [107014700, 340000000], [104577600, 327748400] ],
         'polygon_segment_having_point';
 }
@@ -84,7 +84,7 @@ Tests for unused methods still written in perl
         //my $p3 = [10, 30];
         //my $p4 = [20, 20];
         //my $p5 = [0,  20];
-        
+
         THEN("Points in a line give the correct angles"){
             //is Slic3r::Geometry::angle3points($p2, $p3, $p1),  PI(),   'angle3points';
             //is Slic3r::Geometry::angle3points($p2, $p1, $p3),  PI(),   'angle3points';
@@ -101,7 +101,7 @@ Tests for unused methods still written in perl
         //my $p2 = [20, 20];
         //my $p3 = [10, 10];
         //my $p4 = [30, 10];
-        
+
         //is Slic3r::Geometry::angle3points($p2, $p1, $p3), PI(),       'angle3points';
         //is Slic3r::Geometry::angle3points($p2, $p1, $p4), PI()/2*3,   'angle3points';
         //is Slic3r::Geometry::angle3points($p2, $p1, $p1), 2*PI(),     'angle3points';
@@ -115,7 +115,7 @@ SCENARIO("polygon_is_convex works"){
         }
         THEN("It is convex counter-clockwise"){
             //is polygon_is_convex([ reverse @$cw_square ]), 1, 'ccw square is convex';
-        } 
+        }
 
     }
     GIVEN("A concave polygon"){
@@ -191,8 +191,8 @@ SCENARIO("Circle Fit, TaubinFit with Newton's method") {
     }
     GIVEN("A vector of Pointfs arranged in a half-circle with approximately the same distance R from some point") {
         Pointf expected_center(-3, 9);
-        Pointfs sample {Pointf(6.0, 0), Pointf(5.1961524, 3), Pointf(3 ,5.1961524), 
-                        Pointf(0, 6.0), 
+        Pointfs sample {Pointf(6.0, 0), Pointf(5.1961524, 3), Pointf(3 ,5.1961524),
+                        Pointf(0, 6.0),
                         Pointf(3, 5.1961524), Pointf(-5.1961524, 3), Pointf(-6.0, 0)};
 
         std::transform(sample.begin(), sample.end(), sample.begin(), [expected_center] (const Pointf& a) { return a + expected_center;});
@@ -222,8 +222,8 @@ SCENARIO("Circle Fit, TaubinFit with Newton's method") {
     }
     GIVEN("A vector of Points arranged in a half-circle with approximately the same distance R from some point") {
         Point expected_center { Point::new_scale(-3, 9)};
-        Points sample {Point::new_scale(6.0, 0), Point::new_scale(5.1961524, 3), Point::new_scale(3 ,5.1961524), 
-                        Point::new_scale(0, 6.0), 
+        Points sample {Point::new_scale(6.0, 0), Point::new_scale(5.1961524, 3), Point::new_scale(3 ,5.1961524),
+                        Point::new_scale(0, 6.0),
                         Point::new_scale(3, 5.1961524), Point::new_scale(-5.1961524, 3), Point::new_scale(-6.0, 0)};
 
         std::transform(sample.begin(), sample.end(), sample.begin(), [expected_center] (const Point& a) { return a + expected_center;});
@@ -273,7 +273,7 @@ SCENARIO("Line distances"){
             REQUIRE(Point(0, 0).distance_to(line)  == 0);
             REQUIRE(Point(20, 0).distance_to(line) == 0);
             REQUIRE(Point(10, 0).distance_to(line) == 0);
-        
+
         }
         THEN("Points off the line have the appropriate distance"){
             REQUIRE(Point(10, 10).distance_to(line) == 10);
@@ -375,4 +375,4 @@ TEST_CASE("Triangle Simplification does not result in less than 3 points"){
     REQUIRE(triangle.simplify(250000).at(0).points.size() == 3);
 }
 
-    
+

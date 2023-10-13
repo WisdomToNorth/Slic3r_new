@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/sizer.h"
@@ -208,7 +208,7 @@ SCENARIO( "PresetChooser Preset loading" ) {
     Settings default_settings;
     auto& settings_presets = default_settings.default_presets;
     wxUIActionSimulator sim;
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
 

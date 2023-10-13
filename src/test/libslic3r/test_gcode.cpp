@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <regex>
 #include "test_data.hpp"
 #include "GCodeReader.hpp"

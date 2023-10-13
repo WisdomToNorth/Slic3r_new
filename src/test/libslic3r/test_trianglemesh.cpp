@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include "TriangleMesh.hpp"
 #include "libslic3r.h"
@@ -23,7 +23,7 @@ SCENARIO( "TriangleMesh: Basic mesh statistics") {
         constexpr std::array<Point3, 12> facets { Point3(0,1,2), Point3(0,2,3), Point3(4,5,6), Point3(4,6,7), Point3(0,4,7), Point3(0,7,1), Point3(1,7,6), Point3(1,6,2), Point3(2,6,5), Point3(2,5,3), Point3(4,0,3), Point3(4,3,5) };
         auto cube {TriangleMesh(vertices, facets)};
         cube.repair();
-        
+
         THEN( "Volume is appropriate for 20mm square cube.") {
             REQUIRE(abs(cube.volume() - 20.0*20.0*20.0) < 1e-2);
         }
@@ -256,7 +256,7 @@ SCENARIO( "make_xxx functions produce meshes.") {
                 auto verts {cyl.vertices()};
                 REQUIRE(std::count_if(verts.begin(), verts.end(), [](Pointf3& t) { return t.x == 0 && t.y == 0 && t.z == 10; } ) == 1);
             }
-            THEN("Resulting mesh has 2 + (2*PI/angle * 2) vertices.") { 
+            THEN("Resulting mesh has 2 + (2*PI/angle * 2) vertices.") {
                 REQUIRE(cyl.vertices().size() == (2 + ((2*PI/angle)*2)));
             }
             THEN("Resulting mesh has 2*PI/angle * 4 facets") {

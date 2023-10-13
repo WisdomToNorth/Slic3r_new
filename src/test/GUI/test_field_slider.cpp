@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #ifndef WX_PRECOMP
 #include <wx/app.h>
 #include <wx/sizer.h>
@@ -13,7 +13,7 @@
 using namespace std::string_literals;
 
 SCENARIO( "UI_Slider: Defaults, Min/max handling, accessors.") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;
@@ -94,7 +94,7 @@ SCENARIO( "UI_Slider: Defaults, Min/max handling, accessors.") {
             test_field.slider()->Enable();
             test_field.textctrl()->Enable();
             test_field.textctrl()->SetEditable(true);
-            
+
             test_field.disable();
             THEN("Internal slider is disabled.") {
                 REQUIRE(test_field.slider()->IsEnabled() == false);
@@ -150,7 +150,7 @@ SCENARIO( "UI_Slider: Defaults, Min/max handling, accessors.") {
 }
 
 SCENARIO( "UI_Slider: Event handlers") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;

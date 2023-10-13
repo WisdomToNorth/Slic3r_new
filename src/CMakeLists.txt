@@ -19,7 +19,7 @@ endif()
 
 if (MSVC)
     add_compile_options(-W3)
-    add_compile_options(-bigobj) 
+    add_compile_options(-bigobj)
 else()
     add_compile_options(-Wall)
 endif()
@@ -38,10 +38,10 @@ endif(DEFINED ENV{SLIC3R_VAR_ABS_PATH})
 
 # mingw needs to be told to deal with large objects
 if(MINGW)
-    add_compile_options(-Wa,-mbig-obj) 
+    add_compile_options(-Wa,-mbig-obj)
 endif()
 
-if(Enable_GUI) 
+if(Enable_GUI)
     add_compile_options(-DUSE_WX)
 endif(Enable_GUI)
 
@@ -70,7 +70,7 @@ if (MSVC)
     elseif (CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
         add_compile_options(-DEBUG -O2)
     endif()
-else()    
+else()
     if (CMAKE_BUILD_TYPE MATCHES Debug)
         add_compile_options(-g -O0)
     elseif (CMAKE_BUILD_TYPE MATCHES Release)
@@ -406,7 +406,7 @@ set(LIBSLIC3R_DEPENDS
     ZipArchive
     miniz
     ${Boost_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT} 
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 set(SLIC3R_GUI_INCLUDES
@@ -417,13 +417,14 @@ set(SLIC3R_GUI_INCLUDES
     ${wxWidgets_INCLUDE}
 )
 
+find_package(Catch2 CONFIG REQUIRED)
 
 IF(wxWidgets_FOUND AND OPENGL_FOUND AND Enable_GUI)
     MESSAGE("wx found!")
     MESSAGE("OpenGL found!")
     INCLUDE("${wxWidgets_USE_FILE}")
 
-    add_library(slic3r_gui STATIC 
+    add_library(slic3r_gui STATIC
     ${GUI_LIBDIR}/Dialogs/AboutDialog.cpp
     ${GUI_LIBDIR}/Dialogs/PresetEditor.cpp
     ${GUI_LIBDIR}/Dialogs/PrintEditor.cpp
@@ -459,46 +460,50 @@ IF(wxWidgets_FOUND AND OPENGL_FOUND AND Enable_GUI)
 
     if (GUI_BUILD_TESTS)
         enable_testing()
-        if (NOT TARGET Catch)
-            include (ExternalProject)
-            if(IS_TRAVIS_BUILD)     # on travis, use git for fetching instead of wget
-                set(FETCH_EXTERNAL_CATCH
-                    GIT_REPOSITORY https://github.com/catchorg/Catch.git
-                    GIT_TAG 03d122a35c3f5c398c43095a87bc82ed44642516)
-            elseif(WIN32)
-                set(FETCH_EXTERNAL_CATCH
-                    URL https://github.com/catchorg/Catch2/archive/v2.4.2.zip
-                    URL_HASH MD5=6a2ffb9c69d368ebc1ad13146c5a5e1e)
-            else()
-                set(FETCH_EXTERNAL_CATCH
-                    URL https://github.com/catchorg/Catch2/archive/v2.4.2.tar.gz
-                    URL_HASH MD5=26927b878b1f42633f15a9ef1c4bd8e7)
-            endif()
-            ExternalProject_Add(Catch-External
-                PREFIX ${CMAKE_BINARY_DIR}/external/Catch
-                ${FETCH_EXTERNAL_CATCH}
-                CONFIGURE_COMMAND ""
-                BUILD_COMMAND ""
-                INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/external/Catch/src/Catch-External/single_include/catch2/catch.hpp
-                                                         ${CMAKE_BINARY_DIR}/external/Catch/include/catch.hpp
-            )
-            add_library(Catch INTERFACE)
-            add_dependencies(Catch Catch-External)
 
-            target_include_directories(Catch INTERFACE ${CMAKE_BINARY_DIR}/external/Catch/include)
-            target_compile_definitions(Catch INTERFACE $<$<CXX_COMPILER_ID:MSVC>:_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING>)
-        endif()
-        add_executable(gui_test ${UI_TEST_SOURCES}) 
+        # if (NOT TARGET Catch)
+        #     include (ExternalProject)
+        #     # if(IS_TRAVIS_BUILD)     # on travis, use git for fetching instead of wget
+        #     #     set(FETCH_EXTERNAL_CATCH
+        #     #         GIT_REPOSITORY https://github.com/catchorg/catch2
+        #     #         GIT_TAG 766541d12d64845f5232a1ce4e34a85e83506b09)
+        #     # elseif(WIN32)
+        #     #     set(FETCH_EXTERNAL_CATCH
+        #     #         URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.4.0.zip
+        #     #         #URL_HASH MD5=6a2ffb9c69d368ebc1ad13146c5a5e1e
+        #     #         )
+        #     # else()
+        #     #     set(FETCH_EXTERNAL_CATCH
+        #     #         URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.4.0.tar.gz
+        #     #         #URL_HASH MD5=26927b878b1f42633f15a9ef1c4bd8e7
+        #     #         )
+        #     # endif()
+        #     # ExternalProject_Add(Catch-External
+        #     #     PREFIX ${CMAKE_BINARY_DIR}/external/Catch
+        #     #     ${FETCH_EXTERNAL_CATCH}
+        #     #     CONFIGURE_COMMAND ""
+        #     #     BUILD_COMMAND ""
+        #     #     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/external/Catch/src/Catch-External/single_include/catch2/catch.hpp
+        #     #                                              ${CMAKE_BINARY_DIR}/external/Catch/include/catch.hpp
+        #     # )
+        #     # add_library(Catch INTERFACE)
+        #     # add_dependencies(Catch Catch-External)
+
+        #     target_include_directories(Catch INTERFACE ${CMAKE_BINARY_DIR}/external/Catch/include)
+        #     target_compile_definitions(Catch INTERFACE $<$<CXX_COMPILER_ID:MSVC>:_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING>)
+        # endif()
+
+        add_executable(gui_test ${UI_TEST_SOURCES})
         add_test(NAME TestGUI COMMAND gui_test)
         configure_file("${TESTDIR}/test_options.hpp.in" "${TESTDIR}/test_options.hpp")
-        target_link_libraries(gui_test PUBLIC slic3r_gui libslic3r Catch ${wxWidgets_LIBRARIES} ${LIBSLIC3R_DEPENDS} ${OPENGL_LIBRARIES})
+        target_link_libraries(gui_test PUBLIC slic3r_gui libslic3r Catch2::Catch2 ${wxWidgets_LIBRARIES} ${LIBSLIC3R_DEPENDS} ${OPENGL_LIBRARIES})
         target_include_directories(gui_test PUBLIC cxx_std_14 ${SLIC3R_GUI_INCLUDES} )
         target_include_directories(gui_test PUBLIC ${TESTDIR})
         target_compile_options(gui_test PUBLIC -DBUILD_TEST)
     endif()
     if (WIN32)
-        target_link_libraries(slic3r uxtheme)    
-    endif()    
+        target_link_libraries(slic3r uxtheme)
+    endif()
 ELSE(wxWidgets_FOUND AND OPENGL_FOUND AND Enable_GUI)
     # For convenience. When we cannot continue, inform the user
     if (Enable_GUI)
@@ -518,18 +523,18 @@ if (BUILD_EXTRUDE_TIN)
     add_executable(extrude-tin utils/extrude-tin.cpp)
     set_target_properties(extrude-tin PROPERTIES LINK_SEARCH_START_STATIC 1)
     set_target_properties(extrude-tin PROPERTIES LINK_SEARCH_END_STATIC 1)
-endif() 
+endif()
 
 # Windows needs a compiled component for Boost.nowide
 IF (WIN32)
     if (NOT BOOST_NOWIDE_FOUND)
-        add_library(boost-nowide STATIC 
+        add_library(boost-nowide STATIC
             ${LIBDIR}/boost/nowide/iostream.cpp
         )
         if(MSVC)
             # Tell boost pragmas to not rename nowide as we are building it
             add_definitions(-DBOOST_NOWIDE_NO_LIB)
-        endif()    
+        endif()
         target_link_libraries(slic3r boost-nowide)
         target_include_directories(boost-nowide PUBLIC ${COMMON_INCLUDES})
     endif()
@@ -547,43 +552,17 @@ ENDIF(WIN32)
 
 if (SLIC3R_BUILD_TESTS)
     enable_testing()
-    if (NOT TARGET Catch)
-        include (ExternalProject)
-        if(IS_TRAVIS_BUILD)     # on travis, use git for fetching instead of wget
-            set(FETCH_EXTERNAL_CATCH
-                GIT_REPOSITORY https://github.com/catchorg/Catch.git
-                GIT_TAG 03d122a35c3f5c398c43095a87bc82ed44642516)
-        elseif(WIN32)
-            set(FETCH_EXTERNAL_CATCH
-                URL https://github.com/catchorg/Catch2/archive/v2.4.2.zip
-                URL_HASH MD5=6a2ffb9c69d368ebc1ad13146c5a5e1e)
-        else()
-            set(FETCH_EXTERNAL_CATCH
-                URL https://github.com/catchorg/Catch2/archive/v2.4.2.tar.gz
-                URL_HASH MD5=26927b878b1f42633f15a9ef1c4bd8e7)
-        endif()
-        ExternalProject_Add(Catch-External
-            PREFIX ${CMAKE_BINARY_DIR}/external/Catch
-            ${FETCH_EXTERNAL_CATCH}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ""
-            INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/external/Catch/src/Catch-External/single_include/catch2/catch.hpp
-                                                     ${CMAKE_BINARY_DIR}/external/Catch/include/catch.hpp
-        )
-        add_library(Catch INTERFACE)
-        add_dependencies(Catch Catch-External)
-        target_include_directories(Catch INTERFACE ${CMAKE_BINARY_DIR}/external/Catch/include)
-        target_compile_definitions(Catch INTERFACE $<$<CXX_COMPILER_ID:MSVC>:_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING>)
-    endif()
+
     configure_file("${TESTDIR}/test_options.hpp.in" "${TESTDIR}/test_options.hpp")
-    add_executable(slic3r_test ${SLIC3R_TEST_SOURCES}) 
+
+    add_executable(slic3r_test ${SLIC3R_TEST_SOURCES})
     target_compile_options(slic3r_test PUBLIC -DSLIC3R_TEST)
     add_test(NAME TestSlic3r COMMAND slic3r_test)
     target_compile_features(slic3r_test PUBLIC cxx_std_14)
     target_include_directories(slic3r_test PUBLIC cxx_std_14 ${SLIC3R_INCLUDES})
     target_include_directories(slic3r_test PUBLIC ${TESTDIR})
 
-    target_link_libraries(slic3r_test PUBLIC libslic3r Catch ${LIBSLIC3R_DEPENDS})
+    target_link_libraries(slic3r_test PUBLIC libslic3r Catch2::Catch2 ${LIBSLIC3R_DEPENDS})
 endif()
 
 if (BUILD_EXTRUDE_TIN)

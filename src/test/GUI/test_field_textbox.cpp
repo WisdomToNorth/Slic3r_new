@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -15,7 +15,7 @@ using namespace Slic3r::GUI;
 using namespace std::string_literals;
 
 SCENARIO( "TextCtrl initializes with default value if available.") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
 
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
@@ -36,7 +36,7 @@ SCENARIO( "TextCtrl initializes with default value if available.") {
 }
 
 SCENARIO( "Receiving a Textctrl event") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxMilliSleep(250);
@@ -76,7 +76,7 @@ SCENARIO( "Receiving a Textctrl event") {
 }
 
 SCENARIO( "TextCtrl: Changing the text via entry works on pressing enter") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;
@@ -128,10 +128,10 @@ SCENARIO( "TextCtrl: Changing the text via entry works on pressing enter") {
         WHEN( "A number is entered and focus is lost") {
             auto killfunc {[&exec_counter](const std::string& opt_id) { exec_counter += 1; }};
             test_field.on_kill_focus = killfunc;
-            
+
             auto ev {wxFocusEvent(wxEVT_KILL_FOCUS, test_field.textctrl()->GetId())};
             ev.SetEventObject(test_field.textctrl());
-            
+
             exec_counter = 0;
             test_field.textctrl()->SetValue("3");
             test_field.textctrl()->SetFocus();
@@ -162,7 +162,7 @@ SCENARIO( "TextCtrl: Changing the text via entry works on pressing enter") {
 }
 
 SCENARIO( "Multiline doesn't update other than on focus change.") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;
@@ -184,10 +184,10 @@ SCENARIO( "Multiline doesn't update other than on focus change.") {
         WHEN( "text is entered and focus is lost") {
             auto killfunc {[&exec_counter](const std::string& opt_id) { exec_counter += 1; }};
             test_field.on_kill_focus = killfunc;
-            
+
             auto ev {wxFocusEvent(wxEVT_KILL_FOCUS, test_field.textctrl()->GetId())};
             ev.SetEventObject(test_field.textctrl());
-            
+
             exec_counter = 0;
             test_field.textctrl()->SetFocus();
             wxYield();

@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #ifndef WX_PRECOMP
 #include "wx/app.h"
@@ -17,7 +17,7 @@
 using namespace std::string_literals;
 
 SCENARIO( "UI_Point3: default values from options and basic accessor methods") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;
@@ -69,7 +69,7 @@ SCENARIO( "UI_Point3: default values from options and basic accessor methods") {
 }
 
 SCENARIO( "UI_Point3: set_value works with several types of inputs") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;
@@ -165,7 +165,7 @@ SCENARIO( "UI_Point3: set_value works with several types of inputs") {
 }
 
 SCENARIO( "UI_Point3: Event responses") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxMilliSleep(250);
@@ -305,7 +305,7 @@ SCENARIO( "UI_Point3: Event responses") {
 }
 
 SCENARIO( "UI_Point3: Enable/Disable") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxMilliSleep(250);
@@ -348,7 +348,7 @@ SCENARIO( "UI_Point3: Enable/Disable") {
 }
 
 SCENARIO( "UI_Point3: get_sizer()") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxMilliSleep(250);

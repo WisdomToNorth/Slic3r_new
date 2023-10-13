@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include "Model.hpp"
 #include "test_data.hpp" // get access to init_print, etc
 
@@ -9,7 +9,7 @@ SCENARIO("Model construction") {
         auto model {Slic3r::Model()};
         auto sample_mesh {Slic3r::TriangleMesh::make_cube(20,20,20)};
         sample_mesh.repair();
-        
+
         auto config {Slic3r::Config::new_from_defaults()};
         std::shared_ptr<Slic3r::Print> print = std::make_shared<Slic3r::Print>();
         print->apply_config(config);

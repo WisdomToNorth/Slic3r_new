@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include "test_data.hpp" // get access to init_print, etc
 #include "GCodeReader.hpp"
 #include "Config.hpp"
@@ -158,7 +158,7 @@ SCENARIO("Original Slic3r Skirt/Brim tests", "[!mayfail]") {
             config->set("first_layer_extrusion_width", 0.5);
             config->set("brim_width", 1);
             config->set("brim_ears", false);
-			
+
             THEN("2 brim lines") {
                 Slic3r::Model model;
                 auto print {Slic3r::Test::init_print({TestMesh::cube_20x20x20}, model, config)};
@@ -173,7 +173,7 @@ SCENARIO("Original Slic3r Skirt/Brim tests", "[!mayfail]") {
             config->set("brim_width", 1);
             config->set("brim_ears", true);
             config->set("brim_ears_max_angle", 91);
-			
+
             Slic3r::Model model;
             auto print {Slic3r::Test::init_print({TestMesh::cube_20x20x20}, model, config)};
             print->process();
@@ -190,7 +190,7 @@ SCENARIO("Original Slic3r Skirt/Brim tests", "[!mayfail]") {
             config->set("brim_width", 1);
             config->set("brim_ears", true);
             config->set("brim_ears_max_angle", 89);
-			
+
             THEN("no brim") {
                 Slic3r::Model model;
                 auto print {Slic3r::Test::init_print({TestMesh::cube_20x20x20}, model, config)};

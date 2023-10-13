@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -15,7 +15,7 @@
 using namespace Slic3r::GUI;
 
 SCENARIO( "GUI Checkbox option items fire their on_kill_focus when focus leaves the checkbox." ) {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;
@@ -23,7 +23,7 @@ SCENARIO( "GUI Checkbox option items fire their on_kill_focus when focus leaves 
     GIVEN( "A checkbox field item exists on a window") {
         auto exec_counter {0};
         auto test_field {Slic3r::GUI::UI_Checkbox(wxTheApp->GetTopWindow(), Slic3r::ConfigOptionDef())};
-        
+
         auto killfunc {[&exec_counter](const std::string& opt_id) { exec_counter += 1; }};
 
         test_field.on_kill_focus = killfunc;
@@ -66,11 +66,11 @@ SCENARIO( "GUI Checkbox option items fire their on_kill_focus when focus leaves 
     }
 }
 SCENARIO( "GUI Checkbox set_value and get_bool work as expected." ) {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxMilliSleep(500);
-    
+
     auto test_field {Slic3r::GUI::UI_Checkbox(wxTheApp->GetTopWindow(), Slic3r::ConfigOptionDef())};
 
     GIVEN( "A checkbox field item exists on a window") {
@@ -88,7 +88,7 @@ SCENARIO( "GUI Checkbox set_value and get_bool work as expected." ) {
         }
         WHEN ( "set_value is a floating point number > 0") {
             test_field.set_value(true);
-            try { 
+            try {
                 test_field.set_value(10.2);
             } catch (boost::bad_any_cast &e) {
                 THEN( " Nothing happens; exception was thrown (and caught).") {
@@ -104,7 +104,7 @@ SCENARIO( "GUI Checkbox set_value and get_bool work as expected." ) {
 
 SCENARIO( "GUI Checkbox option respond to EVT_CHECKBOX when appropriate." ) {
     wxUIActionSimulator sim;
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     auto* boolopt { new Slic3r::ConfigOptionBool(true) };
@@ -112,10 +112,10 @@ SCENARIO( "GUI Checkbox option respond to EVT_CHECKBOX when appropriate." ) {
     wxMilliSleep(500);
     GIVEN( "A checkbox field item and disable_change = false") {
         auto exec_counter {0};
-       
+
         auto changefunc {[&exec_counter](const std::string& opt_id, bool value) { exec_counter += 1; }};
         auto test_field {Slic3r::GUI::UI_Checkbox(wxTheApp->GetTopWindow(), Slic3r::ConfigOptionDef())};
-        
+
         test_field.disable_change_event = false;
         test_field.on_change = changefunc;
 
@@ -184,7 +184,7 @@ SCENARIO( "GUI Checkbox option respond to EVT_CHECKBOX when appropriate." ) {
         WHEN ( "the box is clicked and enabled") {
             exec_counter = 0;
             test_field->enable();
-            test_field->set_value(true); 
+            test_field->set_value(true);
 
             auto ev {wxCommandEvent(wxEVT_CHECKBOX, test_field->check()->GetId())};
             ev.SetEventObject(test_field->check());
@@ -200,7 +200,7 @@ SCENARIO( "GUI Checkbox option respond to EVT_CHECKBOX when appropriate." ) {
         }
         WHEN ( "the box is clicked and toggled true") {
             exec_counter = 0;
-            test_field->set_value(true); 
+            test_field->set_value(true);
             test_field->toggle(true);
             auto ev {wxCommandEvent(wxEVT_CHECKBOX, test_field->check()->GetId())};
             ev.SetEventObject(test_field->check());
@@ -216,7 +216,7 @@ SCENARIO( "GUI Checkbox option respond to EVT_CHECKBOX when appropriate." ) {
         }
         WHEN ( "the box is clicked and toggled false") {
             exec_counter = 0;
-            test_field->set_value(true); 
+            test_field->set_value(true);
             test_field->toggle(false);
             auto ev {wxCommandEvent(wxEVT_CHECKBOX, test_field->check()->GetId())};
             ev.SetEventObject(test_field->check());

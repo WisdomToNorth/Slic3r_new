@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <regex>
 #include "test_data.hpp"
@@ -74,7 +74,7 @@ SCENARIO( "PrintGCode basic functionality") {
                 double final_z {0.0};
                 auto reader {GCodeReader()};
                 reader.apply_config(print->config);
-                reader.parse(exported, [&final_z] (GCodeReader& self, const GCodeReader::GCodeLine& line) 
+                reader.parse(exported, [&final_z] (GCodeReader& self, const GCodeReader::GCodeLine& line)
                 {
                     final_z = std::max(final_z, static_cast<double>(self.Z)); // record the highest Z point we reach
                 });
@@ -115,7 +115,7 @@ SCENARIO( "PrintGCode basic functionality") {
                 double final_z {0.0};
                 auto reader {GCodeReader()};
                 reader.apply_config(print->config);
-                reader.parse(exported, [&final_z] (GCodeReader& self, const GCodeReader::GCodeLine& line) 
+                reader.parse(exported, [&final_z] (GCodeReader& self, const GCodeReader::GCodeLine& line)
                 {
                     final_z = std::max(final_z, static_cast<double>(self.Z)); // record the highest Z point we reach
                 });
@@ -126,7 +126,7 @@ SCENARIO( "PrintGCode basic functionality") {
                 bool reset {false};
                 auto reader {GCodeReader()};
                 reader.apply_config(print->config);
-                reader.parse(exported, [&final_z, &reset] (GCodeReader& self, const GCodeReader::GCodeLine& line) 
+                reader.parse(exported, [&final_z, &reset] (GCodeReader& self, const GCodeReader::GCodeLine& line)
                 {
                     if (final_z > 0 && std::abs(self.Z - 0.3) < 0.01 ) { // saw higher Z before this, now it's lower
                         reset = true;
@@ -141,9 +141,9 @@ SCENARIO( "PrintGCode basic functionality") {
                 bool reset {false};
                 auto reader {GCodeReader()};
                 reader.apply_config(print->config);
-                reader.parse(exported, [&final_z, &reset] (GCodeReader& self, const GCodeReader::GCodeLine& line) 
+                reader.parse(exported, [&final_z, &reset] (GCodeReader& self, const GCodeReader::GCodeLine& line)
                 {
-                    if (final_z > 0 && std::abs(self.Z - 0.3) < 0.01 ) { 
+                    if (final_z > 0 && std::abs(self.Z - 0.3) < 0.01 ) {
                         reset = (final_z > 20.0);
                     } else {
                         final_z = std::max(final_z, static_cast<double>(self.Z)); // record the highest Z point we reach
@@ -258,8 +258,8 @@ SCENARIO( "PrintGCode basic functionality") {
             Slic3r::Test::gcode(gcode, print);
 
             auto exported {gcode.str()};
-            int count = 2;            
-            for(int pos = 0; pos != std::string::npos; count--) 
+            int count = 2;
+            for(int pos = 0; pos != std::string::npos; count--)
                 pos = exported.find(";Layer:38 (20 mm)", pos+1);
 
             THEN("layer_num and layer_z are processed in the end gcode") {\

@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include "test_data.hpp"
 #include "Fill/Fill.hpp"
 #include "Print.hpp"
@@ -39,12 +39,12 @@ TEST_CASE("Fill: Pattern Path Length") {
         test_set.reserve(4);
         Pointfs points {Pointf(0,0), Pointf(100,0), Pointf(100,100), Pointf(0,100)};
         for (size_t i = 0; i < 4; ++i) {
-            std::transform(points.cbegin()+i, points.cend(),   std::back_inserter(test_set), [] (const Pointf& a) -> Point { return Point::new_scale(a); } ); 
-            std::transform(points.cbegin(), points.cbegin()+i, std::back_inserter(test_set), [] (const Pointf& a) -> Point { return Point::new_scale(a); } ); 
+            std::transform(points.cbegin()+i, points.cend(),   std::back_inserter(test_set), [] (const Pointf& a) -> Point { return Point::new_scale(a); } );
+            std::transform(points.cbegin(), points.cbegin()+i, std::back_inserter(test_set), [] (const Pointf& a) -> Point { return Point::new_scale(a); } );
             Polylines paths {test(Slic3r::ExPolygon(test_set))};
             REQUIRE(paths.size() == 1); // one continuous path
 
-            // TODO: determine what the "Expected length" should be for rectilinear fill of a 100x100 polygon. 
+            // TODO: determine what the "Expected length" should be for rectilinear fill of a 100x100 polygon.
             // This check only checks that it's above scale(3*100 + 2*50) + scaled_epsilon.
             // ok abs($paths->[0]->length - scale(3*100 + 2*50)) - scaled_epsilon, 'path has expected length';
             REQUIRE(std::abs(paths[0].length() - static_cast<double>(scale_(3*100 + 2*50))) - SCALED_EPSILON > 0); // path has expected length
@@ -56,7 +56,7 @@ TEST_CASE("Fill: Pattern Path Length") {
         Pointfs points {Pointf(0,0), Pointf(100,0), Pointf(150,50), Pointf(100,100), Pointf(0,100), Pointf(-50,50)};
         Points test_set;
         test_set.reserve(6);
-        std::transform(points.cbegin(), points.cend(),   std::back_inserter(test_set), [] (const Pointf& a) -> Point { return Point::new_scale(a); } ); 
+        std::transform(points.cbegin(), points.cend(),   std::back_inserter(test_set), [] (const Pointf& a) -> Point { return Point::new_scale(a); } );
         Polylines paths {test(Slic3r::ExPolygon(test_set))};
         REQUIRE(paths.size() == 1); // one continuous path
     }
@@ -69,8 +69,8 @@ TEST_CASE("Fill: Pattern Path Length") {
         Points test_hole;
         Points test_square;
 
-        std::transform(square.cbegin(), square.cend(), std::back_inserter(test_square), [] (const Pointf& a) -> Point { return Point::new_scale(a); } ); 
-        std::transform(hole.cbegin(), hole.cend(), std::back_inserter(test_hole), [] (const Pointf& a) -> Point { return Point::new_scale(a); } ); 
+        std::transform(square.cbegin(), square.cend(), std::back_inserter(test_square), [] (const Pointf& a) -> Point { return Point::new_scale(a); } );
+        std::transform(hole.cbegin(), hole.cend(), std::back_inserter(test_hole), [] (const Pointf& a) -> Point { return Point::new_scale(a); } );
 
         for (double angle : {-(PI/2.0), -(PI/4.0), -(PI), PI/2.0, PI}) {
             for (double spacing : {25.0, 5.0, 7.5, 8.5}) {
@@ -97,7 +97,7 @@ TEST_CASE("Fill: Pattern Path Length") {
         Polylines paths {test(Slic3r::ExPolygon(points))};
         REQUIRE(paths.size() == 1); // one continuous path
 
-        // TODO: determine what the "Expected length" should be for rectilinear fill of a 100x100 polygon. 
+        // TODO: determine what the "Expected length" should be for rectilinear fill of a 100x100 polygon.
         // This check only checks that it's above scale(3*100 + 2*50) + scaled_epsilon.
         // ok abs($paths->[0]->length - scale(3*100 + 2*50)) - scaled_epsilon, 'path has expected length';
         REQUIRE(std::abs(paths[0].length() - static_cast<double>(scale_(3*100 + 2*50))) - SCALED_EPSILON > 0); // path has expected length
@@ -109,7 +109,7 @@ TEST_CASE("Fill: Pattern Path Length") {
         auto filler {Slic3r::Fill::new_from_type("rectilinear")};
         filler->bounding_box = expolygon.bounding_box();
         filler->angle = 0;
-        
+
         auto surface {Surface(stTop, expolygon)};
         auto flow {Slic3r::Flow(0.69, 0.4, 0.50)};
 
@@ -127,10 +127,10 @@ TEST_CASE("Fill: Pattern Path Length") {
             Point::new_scale(6883102, 9598327.01296997),
             Point::new_scale(6883102, 20327272.01297),
             Point::new_scale(3116896, 20327272.01297),
-            Point::new_scale(3116896, 9598327.01296997) 
+            Point::new_scale(3116896, 9598327.01296997)
         };
         ExPolygon expolygon(points);
-         
+
         REQUIRE(test_if_solid_surface_filled(expolygon, 0.55) == true);
         for (size_t i = 0; i <= 20; ++i)
         {
@@ -156,7 +156,7 @@ TEST_CASE("Fill: Pattern Path Length") {
                 Point(59515153,20697500),Point(58502480,20697500),Point(58502480,5422499)
         };
         ExPolygon expolygon(points);
-         
+
         REQUIRE(test_if_solid_surface_filled(expolygon, 0.55) == true);
         REQUIRE(test_if_solid_surface_filled(expolygon, 0.55, PI/2.0) == true);
     }
@@ -165,13 +165,13 @@ TEST_CASE("Fill: Pattern Path Length") {
             Point::new_scale(0,0),Point::new_scale(98,0),Point::new_scale(98,10), Point::new_scale(0,10)
         };
         ExPolygon expolygon(points);
-         
+
         REQUIRE(test_if_solid_surface_filled(expolygon, 0.5, 45.0, 0.99) == true);
     }
 
 }
 
-/* 
+/*
 
 {
     my $collection = Slic3r::Polyline::Collection->new(
@@ -429,10 +429,10 @@ bool test_if_solid_surface_filled(const ExPolygon& expolygon, double flow_spacin
     grown_paths.reserve(paths.size());
 
 // figure out what is actually going on here re: data types
-    std::for_each(paths.begin(), paths.end(), [filler, &grown_paths] (const Polyline& p) { 
+    std::for_each(paths.begin(), paths.end(), [filler, &grown_paths] (const Polyline& p) {
         polygons_append(grown_paths, p.grow(scale_(filler->spacing() / 2.0)));
     });
-    
+
     ExPolygons uncovered = diff_ex(expolygon, grown_paths, true);
 
     // ignore very small dots

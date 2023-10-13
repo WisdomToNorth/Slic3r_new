@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #ifndef WX_PRECOMP
 #include "wx/app.h"
@@ -13,7 +13,7 @@
 using namespace std::string_literals;
 
 SCENARIO( "UI_NumChoice: default values from options") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;
@@ -29,7 +29,7 @@ SCENARIO( "UI_NumChoice: default values from options") {
         simple_option.enum_values.push_back("4");
 
         auto test_field {Slic3r::GUI::UI_NumChoice(wxTheApp->GetTopWindow(), simple_option)};
-        
+
         wxTheApp->GetTopWindow()->Show();
         wxTheApp->GetTopWindow()->Fit();
 
@@ -229,7 +229,7 @@ SCENARIO( "UI_NumChoice: default values from options") {
                 REQUIRE(test_field.get_double() == 3.0);
             }
             THEN( "choice.GetValue() returns the label.") {
-                REQUIRE(test_field.choice()->GetValue() == "C"s); 
+                REQUIRE(test_field.choice()->GetValue() == "C"s);
                 REQUIRE(test_field.choice()->FindString(simple_option.enum_labels[1]) == 1);
             }
         }

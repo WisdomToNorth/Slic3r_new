@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <numeric>
 #include <sstream>
@@ -35,8 +35,8 @@ SCENARIO("Extrusion width specifics", "[!mayfail]") {
             Slic3r::Test::gcode(gcode, print);
             auto parser {Slic3r::GCodeReader()};
             const auto layer_height { config->getFloat("layer_height") };
-            parser.parse_stream(gcode, [&E_per_mm_bottom, layer_height] (Slic3r::GCodeReader& self, const Slic3r::GCodeReader::GCodeLine& line) 
-            { 
+            parser.parse_stream(gcode, [&E_per_mm_bottom, layer_height] (Slic3r::GCodeReader& self, const Slic3r::GCodeReader::GCodeLine& line)
+            {
                 if (self.Z == Approx(layer_height).margin(0.01)) { // only consider first layer
                     if (line.extruding() && line.dist_XY() > 0) {
                         E_per_mm_bottom.emplace_back(line.dist_E() / line.dist_XY());
@@ -88,7 +88,7 @@ SCENARIO(" Bridge flow specifics.", "[!mayfail]") {
     }
 }
 
-/// Test the expected behavior for auto-width, 
+/// Test the expected behavior for auto-width,
 /// spacing, etc
 SCENARIO("Flow: Flow math for non-bridges", "[!mayfail]") {
     GIVEN("Nozzle Diameter of 0.4, a desired width of 1mm and layer height of 0.5") {

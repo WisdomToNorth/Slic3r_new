@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/sizer.h"

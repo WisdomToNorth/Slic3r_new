@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <sstream>
 
 #include "test_data.hpp"
@@ -11,7 +11,7 @@ SCENARIO("init_print functionality") {
         std::stringstream gcode;
         WHEN("init_print is called with a single mesh.") {
             Slic3r::Model model;
-            auto print = init_print({TestMesh::cube_20x20x20}, model, config, true); 
+            auto print = init_print({TestMesh::cube_20x20x20}, model, config, true);
             gcode.clear();
             THEN("One mesh/printobject is in the resulting Print object.") {
                 REQUIRE(print->objects.size() == 1);

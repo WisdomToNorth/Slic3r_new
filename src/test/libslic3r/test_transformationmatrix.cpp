@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <vector>
 
@@ -9,7 +9,7 @@ using namespace Slic3r;
 
 constexpr auto THRESHOLD_EQUALITY = 1.0e-3;
 
-bool check_elements(TransformationMatrix const & matrix, 
+bool check_elements(TransformationMatrix const & matrix,
     double m00, double m01, double m02, double m03,
     double m10, double m11, double m12, double m13,
     double m20, double m21, double m22, double m23);
@@ -20,7 +20,7 @@ SCENARIO("TransformationMatrix: constructors, copytor, comparing, basic operatio
     GIVEN("a default constructed Matrix") {
         auto trafo_default = TransformationMatrix();
         THEN("comparing to the eye matrix") {
-            REQUIRE(check_elements(trafo_default, 
+            REQUIRE(check_elements(trafo_default,
                 1.0, 0.0, 0.0, 0.0,
                 0.0, 1.0, 0.0, 0.0,
                 0.0, 0.0, 1.0, 0.0));
@@ -29,7 +29,7 @@ SCENARIO("TransformationMatrix: constructors, copytor, comparing, basic operatio
         WHEN("copied") {
             auto trafo_eq_assigned = trafo_default;
             THEN("comparing the second to the eye matrix") {
-                REQUIRE(check_elements(trafo_eq_assigned, 
+                REQUIRE(check_elements(trafo_eq_assigned,
                     1.0, 0.0, 0.0, 0.0,
                     0.0, 1.0, 0.0, 0.0,
                     0.0, 0.0, 1.0, 0.0));
@@ -177,7 +177,7 @@ SCENARIO("TransformationMatrix: application") {
                 mat = TransformationMatrix::mat_rotation(vec1,vec1.negative());
                 REQUIRE(check_point(mat.transform(vec1),-1,-2,-3)); // colinear, opposite direction
                 mat = TransformationMatrix::mat_rotation(vec1,vec1);
-                REQUIRE(check_elements(mat, 
+                REQUIRE(check_elements(mat,
                 1.0, 0.0, 0.0, 0.0,
                 0.0, 1.0, 0.0, 0.0,
                 0.0, 0.0, 1.0, 0.0)); // colinear, same direction
@@ -186,7 +186,7 @@ SCENARIO("TransformationMatrix: application") {
     }
 }
 
-bool check_elements(const TransformationMatrix & matrix, 
+bool check_elements(const TransformationMatrix & matrix,
     double m00, double m01, double m02, double m03,
     double m10, double m11, double m12, double m13,
     double m20, double m21, double m22, double m23)

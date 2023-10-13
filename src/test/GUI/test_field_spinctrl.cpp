@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -13,7 +13,7 @@
 
 using namespace Slic3r::GUI;
 SCENARIO( "Spinctrl initializes with default value if available.") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
 
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
@@ -34,7 +34,7 @@ SCENARIO( "Spinctrl initializes with default value if available.") {
 }
 
 SCENARIO( "Receiving a Spinctrl event") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxMilliSleep(250);
@@ -74,7 +74,7 @@ SCENARIO( "Receiving a Spinctrl event") {
 }
 
 SCENARIO( "Changing the text via entry works on pressing enter") {
-    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow()); 
+    wxTestableFrame* old = dynamic_cast<wxTestableFrame*>(wxTheApp->GetTopWindow());
     old->Destroy();
     wxTheApp->SetTopWindow(new wxTestableFrame());
     wxUIActionSimulator sim;
@@ -126,10 +126,10 @@ SCENARIO( "Changing the text via entry works on pressing enter") {
         WHEN( "A number is entered and focus is lost") {
             auto killfunc {[&exec_counter](const std::string& opt_id) { exec_counter += 1; }};
             test_field.on_kill_focus = killfunc;
-            
+
             auto ev {wxFocusEvent(wxEVT_KILL_FOCUS, test_field.spinctrl()->GetId())};
             ev.SetEventObject(test_field.spinctrl());
-            
+
             exec_counter = 0;
             test_field.spinctrl()->SetValue(3);
             test_field.spinctrl()->SetFocus();
