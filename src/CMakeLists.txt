@@ -112,16 +112,6 @@ else(SLIC3R_STATIC)
 endif(SLIC3R_STATIC)
 
 
-if (NOT GIT_VERSION STREQUAL "")
-    if (MSVC)
-        add_compile_options(/DSLIC3R_BUILD_COMMIT=${GIT_VERSION})
-    else(MSVC)
-        execute_process(COMMAND git rev-parse --short HEAD OUTPUT_VARIABLE GIT_VERSION_1)
-        string(REGEX REPLACE "\n$" "" GIT_VERSION "${GIT_VERSION_1}")
-        add_compile_options(-DSLIC3R_BUILD_COMMIT=${GIT_VERSION})
-    endif(MSVC)
-endif(NOT GIT_VERSION STREQUAL "")
-
 find_package(Threads REQUIRED)
 
 set(Boost_NO_BOOST_CMAKE ON)
@@ -416,72 +406,6 @@ set(SLIC3R_GUI_INCLUDES
 )
 
 find_package(Catch2 CONFIG REQUIRED)
-
-IF(wxWidgets_FOUND AND OPENGL_FOUND AND Enable_GUI)
-    MESSAGE("wx found!")
-    MESSAGE("OpenGL found!")
-    INCLUDE("${wxWidgets_USE_FILE}")
-
-    add_library(slic3r_gui STATIC
-    ${GUI_LIBDIR}/Dialogs/AboutDialog.cpp
-    ${GUI_LIBDIR}/Dialogs/PresetEditor.cpp
-    ${GUI_LIBDIR}/Dialogs/PrintEditor.cpp
-    ${GUI_LIBDIR}/Dialogs/PrinterEditor.cpp
-    ${GUI_LIBDIR}/Dialogs/MaterialEditor.cpp
-    ${GUI_LIBDIR}/Dialogs/ObjectCutDialog.cpp
-    ${GUI_LIBDIR}/GUI.cpp
-    ${GUI_LIBDIR}/MainFrame.cpp
-    ${GUI_LIBDIR}/Plater.cpp
-    ${GUI_LIBDIR}/Preset.cpp
-    ${GUI_LIBDIR}/Scene3D.cpp
-    ${GUI_LIBDIR}/Plater/Plate2D.cpp
-    ${GUI_LIBDIR}/Plater/Plate3D.cpp
-    ${GUI_LIBDIR}/Plater/Preview3D.cpp
-    ${GUI_LIBDIR}/Plater/PlaterObject.cpp
-    ${GUI_LIBDIR}/Plater/PresetChooser.cpp
-    ${GUI_LIBDIR}/ProgressStatusBar.cpp
-    ${GUI_LIBDIR}/Settings.cpp
-    ${GUI_LIBDIR}/misc_ui.cpp
-    ${GUI_LIBDIR}/OptionsGroup/UI_NumChoice.cpp
-    ${GUI_LIBDIR}/OptionsGroup/UI_Choice.cpp
-    ${GUI_LIBDIR}/OptionsGroup/UI_Point.cpp
-    ${GUI_LIBDIR}/OptionsGroup/UI_Point3.cpp
-    ${GUI_LIBDIR}/OptionsGroup/UI_Color.cpp
-    ${GUI_LIBDIR}/OptionsGroup/UI_Slider.cpp
-    ${LIBDIR}/slic3r/GUI/3DScene.cpp
-    )
-    target_compile_features(slic3r_gui PUBLIC cxx_std_14)
-    target_include_directories(slic3r_gui PUBLIC ${SLIC3R_GUI_INCLUDES} ${SLIC3R_INCLUDES} )
-    #only build GUI lib if building with wx
-    target_link_libraries (slic3r slic3r_gui ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES})
-    add_compile_options(-DUSE_WX)
-
-    if (GUI_BUILD_TESTS)
-        enable_testing()
-
-        add_executable(gui_test ${UI_TEST_SOURCES})
-        add_test(NAME TestGUI COMMAND gui_test)
-        configure_file("${TESTDIR}/test_options.hpp.in" "${TESTDIR}/test_options.hpp")
-        target_link_libraries(gui_test PUBLIC slic3r_gui libslic3r Catch2::Catch2 ${wxWidgets_LIBRARIES} ${LIBSLIC3R_DEPENDS} ${OPENGL_LIBRARIES})
-        target_include_directories(gui_test PUBLIC cxx_std_14 ${SLIC3R_GUI_INCLUDES} )
-        target_include_directories(gui_test PUBLIC ${TESTDIR})
-        target_compile_options(gui_test PUBLIC -DBUILD_TEST)
-    endif()
-    if (WIN32)
-        target_link_libraries(slic3r uxtheme)
-    endif()
-ELSE(wxWidgets_FOUND AND OPENGL_FOUND AND Enable_GUI)
-    # For convenience. When we cannot continue, inform the user
-    if (Enable_GUI)
-        if (NOT wxWidgets_FOUND)
-            MESSAGE("wx not found!")
-        endif (NOT wxWidgets_FOUND)
-        if (NOT OPENGL_FOUND)
-            MESSAGE("OpenGL not found!")
-        endif (NOT OPENGL_FOUND)
-    endif (Enable_GUI)
-    #skip gui when no wx included
-ENDIF(wxWidgets_FOUND AND OPENGL_FOUND AND Enable_GUI)
 
 target_link_libraries (slic3r libslic3r ${LIBSLIC3R_DEPENDS})
 
