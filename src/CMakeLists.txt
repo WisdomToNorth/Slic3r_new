@@ -1,14 +1,19 @@
-cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16)
 project (slic3r)
 
+set(PROJECT_VERSION 2.0.1)
+set(CONTEXT_VERSION 1.2)
+
+set(CMAKE_CXX_STANDARD 20)
+
 option(Enable_GUI "Use the wxWidgets code in slic3r.cpp" OFF)
-option(GUI_BUILD_TESTS "Build tests for Slic3r GUI." OFF)
+option(GUI_BUILD_TESTS "Build tests for Slic3r GUI." ON)
 option(SLIC3R_BUILD_TESTS "Build tests for libslic3r." ON)
 option(SLIC3R_STATIC "Build and link Slic3r statically." ON)
-option(BUILD_EXTRUDE_TIN "Build and link the extrude-tin application." OFF)
-option(PROFILE "Build with gprof profiling output." OFF)
-option(COVERAGE "Build with gcov code coverage profiling." OFF)
-option(SLIC3R_DEBUG "Build with Slic3r's debug output" OFF)
+option(BUILD_EXTRUDE_TIN "Build and link the extrude-tin application." ON)
+option(PROFILE "Build with gprof profiling output." ON)
+option(COVERAGE "Build with gcov code coverage profiling." ON)
+option(SLIC3R_DEBUG "Build with Slic3r's debug output" ON)
 
 # only on newer GCCs: -ftemplate-backtrace-limit=0
 add_compile_options(-ftemplate-backtrace-limit=0)
@@ -127,7 +132,7 @@ if (NOT (${Boost_VERSION_STRING} VERSION_LESS "1.74.0"))
     find_package(Boost REQUIRED COMPONENTS system thread filesystem OPTIONAL_COMPONENTS nowide)
 endif()
 
-set(LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/../xs/src/)
+set(LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/xssrc/)
 set(GUI_LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/GUI/)
 
 set(TESTDIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
@@ -344,13 +349,10 @@ set(SLIC3R_TEST_SOURCES
 
 add_executable(slic3r slic3r.cpp)
 target_compile_features(slic3r PUBLIC cxx_std_14)
-#set_target_properties(slic3r PROPERTIES LINK_SEARCH_START_STATIC 1)
-#set_target_properties(slic3r PROPERTIES LINK_SEARCH_END_STATIC 1)
 
 if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 3.10)
 cmake_policy(SET CMP0072 NEW)
 endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 3.10)
-
 
 
 if(SLIC3R_STATIC)
@@ -390,10 +392,6 @@ find_package(OpenGL)
 set(wxWidgets_USE_UNICODE ON)
 find_package(wxWidgets COMPONENTS net gl html aui adv core base)
 endif()
-
-IF(CMAKE_HOST_UNIX)
-    #set(Boost_LIBRARIES bsystem bthread bfilesystem)
-ENDIF(CMAKE_HOST_UNIX)
 
 # Libraries that Libslic3r itself depends on.
 set(LIBSLIC3R_DEPENDS
@@ -460,38 +458,6 @@ IF(wxWidgets_FOUND AND OPENGL_FOUND AND Enable_GUI)
 
     if (GUI_BUILD_TESTS)
         enable_testing()
-
-        # if (NOT TARGET Catch)
-        #     include (ExternalProject)
-        #     # if(IS_TRAVIS_BUILD)     # on travis, use git for fetching instead of wget
-        #     #     set(FETCH_EXTERNAL_CATCH
-        #     #         GIT_REPOSITORY https://github.com/catchorg/catch2
-        #     #         GIT_TAG 766541d12d64845f5232a1ce4e34a85e83506b09)
-        #     # elseif(WIN32)
-        #     #     set(FETCH_EXTERNAL_CATCH
-        #     #         URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.4.0.zip
-        #     #         #URL_HASH MD5=6a2ffb9c69d368ebc1ad13146c5a5e1e
-        #     #         )
-        #     # else()
-        #     #     set(FETCH_EXTERNAL_CATCH
-        #     #         URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.4.0.tar.gz
-        #     #         #URL_HASH MD5=26927b878b1f42633f15a9ef1c4bd8e7
-        #     #         )
-        #     # endif()
-        #     # ExternalProject_Add(Catch-External
-        #     #     PREFIX ${CMAKE_BINARY_DIR}/external/Catch
-        #     #     ${FETCH_EXTERNAL_CATCH}
-        #     #     CONFIGURE_COMMAND ""
-        #     #     BUILD_COMMAND ""
-        #     #     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/external/Catch/src/Catch-External/single_include/catch2/catch.hpp
-        #     #                                              ${CMAKE_BINARY_DIR}/external/Catch/include/catch.hpp
-        #     # )
-        #     # add_library(Catch INTERFACE)
-        #     # add_dependencies(Catch Catch-External)
-
-        #     target_include_directories(Catch INTERFACE ${CMAKE_BINARY_DIR}/external/Catch/include)
-        #     target_compile_definitions(Catch INTERFACE $<$<CXX_COMPILER_ID:MSVC>:_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING>)
-        # endif()
 
         add_executable(gui_test ${UI_TEST_SOURCES})
         add_test(NAME TestGUI COMMAND gui_test)
