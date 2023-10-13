@@ -5,8 +5,6 @@
 
 namespace std
 {
-// 兼容boost::thread_group
-// 使用std::thread代替boost::thread,std::mutex代替boost::shared_mutex
 class thread_group
 {
 private:
@@ -29,7 +27,7 @@ public:
     thread *create_thread(F threadfunc)
     {
         lock_guard<mutex> guard(m);
-        auto_ptr<thread> new_thread(new thread(threadfunc));
+        std::unique_ptr<thread> new_thread(new thread(threadfunc));
         threads.push_back(new_thread.get());
         return new_thread.release();
     }

@@ -15,7 +15,7 @@ class ExPolygonCollection
 {
     public:
     ExPolygons expolygons;
-    
+
     ExPolygonCollection() {};
     ExPolygonCollection(const ExPolygon &expolygon);
     ExPolygonCollection(const ExPolygons &expolygons) : expolygons(expolygons) {};
@@ -37,7 +37,7 @@ class ExPolygonCollection
     void append(const ExPolygons &expolygons);
     void append(const ExPolygon &expolygons);
 
-    /// Convenience function to iterate through all of the owned 
+    /// Convenience function to iterate through all of the owned
     /// ExPolygons and check if at least one contains the point.
     bool contains(const Point &point) const;
 

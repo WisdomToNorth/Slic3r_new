@@ -51,7 +51,7 @@ class ThickLine : public Line
 {
     public:
     coordf_t a_width, b_width;
-    
+
     ThickLine() : a_width(0), b_width(0) {};
     ThickLine(Point _a, Point _b) : Line(_a, _b), a_width(0), b_width(0) {};
 };
@@ -88,7 +88,7 @@ namespace boost { namespace polygon {
     struct segment_traits<Line> {
         typedef coord_t coordinate_type;
         typedef Point point_type;
-    
+
         static inline point_type get(const Line& line, direction_1d dir) {
             return dir.to_int() ? line.b : line.a;
         }

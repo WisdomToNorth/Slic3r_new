@@ -47,7 +47,7 @@ class PrintState
 {
     public:
     std::set<StepType> started, done;
-    
+
     bool is_started(StepType step) const;
     bool is_done(StepType step) const;
     void set_started(StepType step);
@@ -70,7 +70,7 @@ class PrintRegion
 
     private:
     Print* _print;
-    
+
     PrintRegion(Print* print);
     ~PrintRegion();
 };
@@ -91,7 +91,7 @@ class PrintObject
     std::map< size_t,std::vector<int> > region_volumes;
     PrintObjectConfig config; //< Configuration
     t_layer_height_ranges layer_height_ranges;
-    
+
     LayerHeightSpline layer_height_spline;
 
     /// this is set to true when LayerRegion->slices is split in top/internal/bottom
@@ -112,11 +112,11 @@ class PrintObject
     SupportLayerPtrs support_layers;
     // TODO: Fill* fill_maker        => (is => 'lazy');
     PrintState<PrintObjectStep> state;
-    
+
     Print* print() { return this->_print; };
     ModelObject* model_object() { return this->_model_object; };
     const ModelObject& model_object() const { return *(this->_model_object); };
-    
+
     Points copies() const;
     bool add_copy(const Pointf &point);
     bool delete_last_copy();
@@ -126,7 +126,7 @@ class PrintObject
     BoundingBox bounding_box() const;
     std::set<size_t> extruders() const;
     std::set<size_t> support_material_extruders() const;
-    
+
     // adds region_id, too, if necessary
     void add_region_volume(int region_id, int volume_id);
 
@@ -140,7 +140,7 @@ class PrintObject
     void delete_layer(int idx);
 
     SupportMaterial* _support_material();
-    
+
     Flow _support_material_flow(FlowRole role = frSupportMaterial);
     size_t support_layer_count() const;
     void clear_support_layers();
@@ -148,12 +148,12 @@ class PrintObject
     const SupportLayer* get_support_layer(int idx) const { return this->support_layers.at(idx); };
     SupportLayer* add_support_layer(int id, coordf_t height, coordf_t print_z);
     void delete_support_layer(int idx);
-    
+
     // methods for handling state
     bool invalidate_state_by_config(const PrintConfigBase &config);
     bool invalidate_step(PrintObjectStep step);
     bool invalidate_all_steps();
-    
+
     bool has_support_material() const;
     void detect_surfaces_type();
     void process_external_surfaces();
@@ -197,9 +197,9 @@ class PrintObject
     /// Idempotence of this method is guaranteed by the fact that we don't remove things from
     /// fill_surfaces but we only turn them into VOID surfaces, thus preserving the boundaries.
     void clip_fill_surfaces();
-    
+
     void _simplify_slices(double distance);
-      
+
     private:
     Print* _print;
     ModelObject* _model_object;
@@ -213,7 +213,7 @@ class PrintObject
     /// Outer loop of logic for horizontal shell discovery
     void _discover_external_horizontal_shells(LayerRegion* layerm, const size_t& i, const size_t& region_id);
     /// Inner loop of logic for horizontal shell discovery
-    void _discover_neighbor_horizontal_shells(LayerRegion* layerm, const size_t& i, const size_t& region_id, const SurfaceType& type, Polygons& solid, const size_t& solid_layers);  
+    void _discover_neighbor_horizontal_shells(LayerRegion* layerm, const size_t& i, const size_t& region_id, const SurfaceType& type, Polygons& solid, const size_t& solid_layers);
 
 };
 
@@ -230,13 +230,13 @@ class Print
     PrintObjectPtrs objects;
     PrintRegionPtrs regions;
     PlaceholderParser placeholder_parser;
-    
+
     std::function<void(int, const std::string&)> status_cb {nullptr};
 
     /// Function pointer for the UI side to call post-processing scripts.
     /// Vector is assumed to be the executable script and all arguments.
     std::function<void(std::vector<std::string>)> post_process_cb {nullptr};
-    
+
     double total_used_filament, total_extruded_volume, total_cost, total_weight;
     std::map<size_t,float> filament_stats;
     PrintState<PrintStep> state;
@@ -247,7 +247,7 @@ class Print
 
     Print();
     ~Print();
-    
+
     // methods for handling objects
     void clear_objects();
     PrintObject* get_object(size_t idx) { return this->objects.at(idx); };
@@ -262,23 +262,23 @@ class Print
     PrintRegion* add_region();
 
     /// Triggers the rest of the print process
-    void process(); 
+    void process();
 
     /// Performs a gcode export.
     void export_gcode(std::ostream& output, bool quiet = false);
-    
+
     /// Performs a gcode export and then runs post-processing scripts (if any)
     void export_gcode(std::string filename, bool quiet = false);
 
     /// commands a gcode export to a temporary file and return its name
     std::string export_gcode(bool quiet = false);
-    
+
     // methods for handling state
     bool invalidate_state_by_config(const PrintConfigBase &config);
     bool invalidate_step(PrintStep step);
     bool invalidate_all_steps();
     bool step_done(PrintObjectStep step) const;
-    
+
     void add_model_object(ModelObject* model_object, int idx = -1);
     #ifndef SLIC3RXS
     /// Apply a provided configuration to the internal copy
@@ -296,14 +296,14 @@ class Print
     Flow skirt_flow() const;
     void _make_brim();
 
-    /// Generates a skirt around the union of all of 
+    /// Generates a skirt around the union of all of
     /// the objects in the print.
     void make_skirt();
 
     /// Generates a brim around all of the objects in the print.
     void make_brim();
-    
-    
+
+
     std::set<size_t> object_extruders() const;
     std::set<size_t> support_material_extruders() const;
     std::set<size_t> extruders() const;

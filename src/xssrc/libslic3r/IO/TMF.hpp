@@ -2,39 +2,48 @@
 #define SLIC3R_TMF_H
 
 #include "../IO.hpp"
-#include "../Zip/ZipArchive.hpp"
 #include "../TransformationMatrix.hpp"
-#include <cstdio>
-#include <string>
-#include <cstring>
-#include <map>
-#include <vector>
+#include "../Zip/ZipArchive.hpp"
 #include <algorithm>
-#include <cmath>
 #include <boost/move/move.hpp>
 #include <boost/nowide/fstream.hpp>
 #include <boost/nowide/iostream.hpp>
+#include <cmath>
+#include <cstdio>
+#include <cstring>
 #include <expat/expat.h>
+#include <map>
+#include <string>
+#include <vector>
 
 #define PI 3.141592653589793238
 
-namespace Slic3r { namespace IO {
+namespace Slic3r
+{
+namespace IO
+{
 
 /// 3MF Editor class responsible for reading and writing 3mf files.
 class TMFEditor
 {
 public:
     const std::map<std::string, std::string> namespaces = {
-            {"3mf", "http://schemas.microsoft.com/3dmanufacturing/core/2015/02"}, // Default XML namespace.
-            {"slic3r", "http://schemas.slic3r.org/3mf/2017/06"}, // Slic3r namespace.
-            {"s", "http://schemas.microsoft.com/3dmanufacturing/slice/2015/07"}, // Slice Extension.
-            {"content_types", "http://schemas.openxmlformats.org/package/2006/content-types"}, // Content_Types namespace.
-            {"relationships", "http://schemas.openxmlformats.org/package/2006/relationships"} // Relationships namespace.
+        {"3mf",
+         "http://schemas.microsoft.com/3dmanufacturing/core/2015/02"}, // Default XML namespace.
+        {"slic3r", "http://schemas.slic3r.org/3mf/2017/06"},           // Slic3r namespace.
+        {"s", "http://schemas.microsoft.com/3dmanufacturing/slice/2015/07"}, // Slice Extension.
+        {"content_types",
+         "http://schemas.openxmlformats.org/package/2006/content-types"}, // Content_Types
+                                                                          // namespace.
+        {"relationships",
+         "http://schemas.openxmlformats.org/package/2006/relationships"} // Relationships namespace.
     };
     ///< Namespaces in the 3MF document.
 
-    TMFEditor(std::string input_file, Model* _model): zip_archive(nullptr), zip_name(input_file), model(_model), object_id(1)
-    {}
+    TMFEditor(std::string input_file, Model *_model) :
+        zip_archive(nullptr), zip_name(input_file), model(_model), object_id(1)
+    {
+    }
 
     /// Write TMF function called by TMF::write() function.
     bool produce_TMF();
@@ -43,43 +52,46 @@ public:
     bool consume_TMF();
 
     ~TMFEditor();
-private:
-    ZipArchive* zip_archive; ///< The zip archive object for reading/writing zip files.
-    std::string zip_name; ///< The zip archive file name.
-    Model* model; ///< The model to be read or written.
-    int object_id; ///< The id available for the next object to be written.
 
-    /// Write the necessary types in the 3MF package. This function is called by produceTMF() function.
+private:
+    ZipArchive *zip_archive; ///< The zip archive object for reading/writing zip files.
+    std::string zip_name;    ///< The zip archive file name.
+    Model *model;            ///< The model to be read or written.
+    int object_id;           ///< The id available for the next object to be written.
+
+    /// Write the necessary types in the 3MF package. This function is called by produceTMF()
+    /// function.
     bool write_types();
 
-    /// Write the necessary relationships in the 3MF package. This function is called by produceTMF() function.
+    /// Write the necessary relationships in the 3MF package. This function is called by
+    /// produceTMF() function.
     bool write_relationships();
 
     /// Write the Model in a zip file. This function is called by produceTMF() function.
     bool write_model();
 
     /// Write the metadata of the model. This function is called by writeModel() function.
-    bool write_metadata(boost::nowide::ofstream& fout);
+    bool write_metadata(boost::nowide::ofstream &fout);
 
     /// Write object of the current model. This function is called by writeModel() function.
     /// \param fout boost::nowide::ofstream& fout output stream.
     /// \param object ModelObject* a pointer to the object to be written.
     /// \param index int the index of the object to be read
     /// \return bool 1: write operation is successful , otherwise not.
-    bool write_object(boost::nowide::ofstream& fout, const ModelObject* object, int index);
+    bool write_object(boost::nowide::ofstream &fout, const ModelObject *object, int index);
 
     /// Write the build element.
-    bool write_build(boost::nowide::ofstream& fout);
+    bool write_build(boost::nowide::ofstream &fout);
 
     /// Read the Model.
     bool read_model();
-
 };
 
 /// 3MF XML Document parser.
-struct TMFParserContext{
-
-    enum TMFNodeType {
+struct TMFParserContext
+{
+    enum TMFNodeType
+    {
         NODE_TYPE_UNKNOWN,
         NODE_TYPE_MODEL,
         NODE_TYPE_METADATA,
@@ -134,8 +146,9 @@ struct TMFParserContext{
 
     static void XMLCALL startElement(void *userData, const char *name, const char **atts);
     static void XMLCALL endElement(void *userData, const char *name);
-    static void XMLCALL characters(void *userData, const XML_Char *s, int len); /* s is not 0 terminated. */
-    static const char* get_attribute(const char **atts, const char *id);
+    static void XMLCALL characters(void *userData, const XML_Char *s,
+                                   int len); /* s is not 0 terminated. */
+    static const char *get_attribute(const char **atts, const char *id);
 
     TMFParserContext(XML_Parser parser, Model *model);
     void startElement(const char *name, const char **atts);
@@ -147,17 +160,17 @@ struct TMFParserContext{
     /// Get transformation from string encoded matrix.
     /// \param matrix string the 3D matrix where elements are separated by space.
     /// \return TransformationMatrix a matrix that contains the complete defined transformation.
-    bool extract_trafo(std::string matrix, TransformationMatrix& trafo);
+    bool extract_trafo(std::string matrix, TransformationMatrix &trafo);
 
     /// Add a new volume to the current object.
     /// \param start_offset size_t the start index in the m_volume_facets vector.
     /// \param end_offset size_t the end index in the m_volume_facets vector.
     /// \param modifier bool whether the volume is modifier or not.
     /// \return ModelVolume* a pointer to the newly added volume.
-    ModelVolume* add_volume(int start_offset, int end_offset, bool modifier);
-
+    ModelVolume *add_volume(int start_offset, int end_offset, bool modifier);
 };
 
-} }
+} // namespace IO
+} // namespace Slic3r
 
-#endif //SLIC3R_TMF_H
+#endif // SLIC3R_TMF_H

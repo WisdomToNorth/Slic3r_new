@@ -1,6 +1,6 @@
-/** 
+/**
  * https://github.com/slic3r/Slic3r/wiki/Conditional-Gcode-Syntax-Spec
- * 
+ *
  */
 
 #ifndef slic3r_ConditionalGcode_hpp_
@@ -13,18 +13,18 @@
 
 // Valid start tokens
 // {, {if
-// 
+//
 // Valid end tokens
 // }
 //
 // Special case:
 //
-// {if is special, it indicates that the rest of the line is dropped (ignored) if 
+// {if is special, it indicates that the rest of the line is dropped (ignored) if
 // it evaluates to False/0.
 
-namespace Slic3r { 
+namespace Slic3r {
 
-/// Recursive expression parser. Offloads mathematics to exprtk. 
+/// Recursive expression parser. Offloads mathematics to exprtk.
 /// Precondition: All strings inside {} are able to be understood by exprtk (and thus parsed to a number).
 /// Starts from the end of the string and works from the inside out.
 /// Any statements that resolve to {if0} will remove everything on the same line.

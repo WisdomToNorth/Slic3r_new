@@ -14,6 +14,7 @@
 #include <queue>
 #include <set>
 #include <stdexcept>
+#include <string>
 #include <utility>
 #include <vector>
 #if BOOST_VERSION >= 107300
@@ -161,7 +162,8 @@ void TriangleMesh::ReadSTLFile(const std::string &input_file)
 #ifdef BOOST_WINDOWS
     stl_open(&stl, boost::nowide::widen(input_file).c_str());
 #else
-    stl_open(&stl, input_file.c_str());
+    stl_open(&stl, const_cast<char *>(input_file.c_str()));
+
 #endif
     if (this->stl.error != 0)
         throw std::runtime_error("Failed to read STL file");
@@ -303,7 +305,7 @@ void TriangleMesh::WriteOBJFile(const std::string &output_file) const
 #ifdef BOOST_WINDOWS
     stl_write_obj(const_cast<stl_file *>(&this->stl), boost::nowide::widen(output_file).c_str());
 #else
-    stl_write_obj(const_cast<stl_file *>(&this->stl), output_file.c_str());
+    stl_write_obj(const_cast<stl_file *>(&this->stl), const_cast<char *>(output_file.c_str()));
 #endif
 }
 
@@ -435,6 +437,7 @@ TriangleMesh TriangleMesh::get_transformed_mesh(TransformationMatrix const &traf
 {
     TriangleMesh mesh;
     std::vector<double> trafo_arr = trafo.matrix3x4f();
+
     stl_get_transform(&(this->stl), &(mesh.stl), trafo_arr.data());
     stl_invalidate_shared_vertices(&(mesh.stl));
     return mesh;

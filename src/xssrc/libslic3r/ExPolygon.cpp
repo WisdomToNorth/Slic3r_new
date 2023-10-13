@@ -157,7 +157,7 @@ ExPolygon::simplify_p(double tolerance) const
 {
     Polygons pp;
     pp.reserve(this->holes.size() + 1);
-    
+
     // contour
     {
         Polygon p = this->contour;
@@ -166,7 +166,7 @@ ExPolygon::simplify_p(double tolerance) const
         p.points.pop_back();
         pp.push_back(p);
     }
-    
+
     // holes
     for (Polygons::const_iterator it = this->holes.begin(); it != this->holes.end(); ++it) {
         Polygon p = *it;
@@ -198,25 +198,25 @@ ExPolygon::medial_axis(const ExPolygon &bounds, double max_width, double min_wid
     // init helper object
     Slic3r::Geometry::MedialAxis ma(max_width, min_width, this);
     ma.lines = this->lines();
-    
+
     // compute the Voronoi diagram and extract medial axis polylines
     ThickPolylines pp;
     ma.build(&pp);
-    
+
     /* // Commented out debug code
     SVG svg("medial_axis.svg");
     svg.draw(*this);
     svg.draw(pp);
     svg.Close();
     */
-    
-    // Find the maximum width returned; we're going to use this for validating and 
+
+    // Find the maximum width returned; we're going to use this for validating and
     // filtering the output segments.
     double max_w = 0;
     for (ThickPolylines::const_iterator it = pp.begin(); it != pp.end(); ++it)
         max_w = fmaxf(max_w, *std::max_element(it->width.begin(), it->width.end()));
-    
-    
+
+
     //  Aligned fusion: Fusion the bits at the end of lines by "increasing thickness"
     //  For that, we have to find other lines,
     //  and with a next point no more distant than the max width.
@@ -319,12 +319,12 @@ ExPolygon::medial_axis(const ExPolygon &bounds, double max_width, double min_wid
             }
         }
     }
-    
-    // Loop through all returned polylines in order to extend their endpoints to the 
+
+    // Loop through all returned polylines in order to extend their endpoints to the
     //   expolygon boundaries
     for (size_t i = 0; i < pp.size(); ++i) {
         ThickPolyline& polyline = pp[i];
-        
+
         // extend initial and final segments of each polyline if they're actual endpoints
         // Assign new endpoints to temporary variables because in case of a single-line
         // polyline. After the start point is extended it will be caught by the intersection()
@@ -333,10 +333,10 @@ ExPolygon::medial_axis(const ExPolygon &bounds, double max_width, double min_wid
         Point new_back  = polyline.points.back();
         if (polyline.endpoints.first && !bounds.has_boundary_point(new_front)) {
             Line line(polyline.points.front(), polyline.points[1]);
-            
+
             // prevent the line from touching on the other side, otherwise intersection() might return that solution
             if (polyline.points.size() == 2) line.b = line.midpoint();
-            
+
             line.extend_start(max_width);
             (void)bounds.contour.intersection(line, &new_front);
         }
@@ -345,35 +345,35 @@ ExPolygon::medial_axis(const ExPolygon &bounds, double max_width, double min_wid
                 *(polyline.points.end() - 2),
                 polyline.points.back()
             );
-            
+
             // prevent the line from touching on the other side, otherwise intersection() might return that solution
             if (polyline.points.size() == 2) line.a = line.midpoint();
             line.extend_end(max_width);
-            
+
             (void)bounds.contour.intersection(line, &new_back);
         }
         polyline.points.front() = new_front;
         polyline.points.back()  = new_back;
     }
-    
+
     // If we removed any short polylines, we now try to connect consecutive polylines
-    // in order to allow loop detection. Note that this algorithm is greedier than 
-    // MedialAxis::process_edge_neighbors(), as it will connect random pairs of 
-    // polylines even when more than two start from the same point. This has no 
-    // drawbacks since we optimize later using nearest-neighbor which would do the 
+    // in order to allow loop detection. Note that this algorithm is greedier than
+    // MedialAxis::process_edge_neighbors(), as it will connect random pairs of
+    // polylines even when more than two start from the same point. This has no
+    // drawbacks since we optimize later using nearest-neighbor which would do the
     // same, but should we use a more sophisticated optimization algorithm.
-    // We should not connect polylines when more than two meet. 
-    // Optimisation of the old algorithm : Select the most "straight line" choice 
+    // We should not connect polylines when more than two meet.
+    // Optimisation of the old algorithm : Select the most "straight line" choice
     // when we merge with an other line at a point with more than two meet.
-        
+
     for (size_t i = 0; i < pp.size(); ++i) {
         ThickPolyline& polyline = pp[i];
         if (polyline.endpoints.first && polyline.endpoints.second) continue; // optimization
-        
+
         ThickPolyline* best_candidate = nullptr;
         float best_dot = -1;
         int best_idx = 0;
-        
+
         // find another polyline starting here
         for (size_t j = i+1; j < pp.size(); ++j) {
             ThickPolyline& other = pp[j];
@@ -387,7 +387,7 @@ ExPolygon::medial_axis(const ExPolygon &bounds, double max_width, double min_wid
             } else if (!polyline.last_point().coincides_with(other.first_point())) {
                 continue;
             }
-            
+
             Pointf v_poly(polyline.lines().back().vector().x, polyline.lines().back().vector().y);
             v_poly.scale(1 / std::sqrt(v_poly.x*v_poly.x + v_poly.y*v_poly.y));
             Pointf v_other(other.lines().front().vector().x, other.lines().front().vector().y);
@@ -405,11 +405,11 @@ ExPolygon::medial_axis(const ExPolygon &bounds, double max_width, double min_wid
             polyline.width.insert(polyline.width.end(), best_candidate->width.begin(), best_candidate->width.end());
             polyline.endpoints.second = best_candidate->endpoints.second;
             assert(polyline.width.size() == polyline.points.size()*2 - 2);
-                
+
             pp.erase(pp.begin() + best_idx);
         }
     }
-    
+
     for (size_t i = 0; i < pp.size(); ++i) {
         ThickPolyline& polyline = pp[i];
 
@@ -426,7 +426,7 @@ ExPolygon::medial_axis(const ExPolygon &bounds, double max_width, double min_wid
 
     }
 
-    
+
     polylines->insert(polylines->end(), pp.begin(), pp.end());
 }
 
@@ -464,22 +464,22 @@ ExPolygon::get_trapezoids2(Polygons* polygons) const
 {
     // get all points of this ExPolygon
     Points pp = *this;
-    
+
     // build our bounding box
     BoundingBox bb(pp);
-    
+
     // get all x coordinates
     std::vector<coord_t> xx;
     xx.reserve(pp.size());
     for (Points::const_iterator p = pp.begin(); p != pp.end(); ++p)
         xx.push_back(p->x);
     std::sort(xx.begin(), xx.end());
-    
+
     // find trapezoids by looping from first to next-to-last coordinate
     for (std::vector<coord_t>::const_iterator x = xx.begin(); x != xx.end()-1; ++x) {
         coord_t next_x = *(x + 1);
         if (*x == next_x) continue;
-        
+
         // build rectangle
         Polygon poly;
         poly.points.resize(4);
@@ -491,10 +491,10 @@ ExPolygon::get_trapezoids2(Polygons* polygons) const
         poly[2].y = bb.max.y;
         poly[3].x = *x;
         poly[3].y = bb.max.y;
-        
+
         // intersect with this expolygon
         Polygons trapezoids = intersection(poly, *this);
-        
+
         // append results to return value
         polygons->insert(polygons->end(), trapezoids.begin(), trapezoids.end());
     }
@@ -518,7 +518,7 @@ ExPolygon::triangulate(Polygons* polygons) const
     // first make trapezoids
     Polygons trapezoids;
     this->get_trapezoids2(&trapezoids);
-    
+
     // then triangulate each trapezoid
     for (Polygons::iterator polygon = trapezoids.begin(); polygon != trapezoids.end(); ++polygon)
         polygon->triangulate_convex(polygons);
@@ -529,9 +529,9 @@ ExPolygon::triangulate_pp(Polygons* polygons) const
 {
     // convert polygons
     std::list<TPPLPoly> input;
-    
+
     ExPolygons expp = simplify_polygons_ex(*this, true);
-    
+
     for (ExPolygons::const_iterator ex = expp.begin(); ex != expp.end(); ++ex) {
         // contour
         {
@@ -546,7 +546,7 @@ ExPolygon::triangulate_pp(Polygons* polygons) const
             p.SetHole(false);
             input.push_back(p);
         }
-    
+
         // holes
         for (Polygons::const_iterator hole = ex->holes.begin(); hole != ex->holes.end(); ++hole) {
             TPPLPoly p;
@@ -561,12 +561,12 @@ ExPolygon::triangulate_pp(Polygons* polygons) const
             input.push_back(p);
         }
     }
-    
+
     // perform triangulation
     std::list<TPPLPoly> output;
     int res = TPPLPartition().Triangulate_MONO(&input, &output);
     if (res != 1) CONFESS("Triangulation failed");
-    
+
     // convert output polygons
     for (std::list<TPPLPoly>::iterator poly = output.begin(); poly != output.end(); ++poly) {
         long num_points = poly->GetNumPoints();
@@ -586,7 +586,7 @@ ExPolygon::triangulate_p2t(Polygons* polygons) const
     for (const ExPolygon &ex : simplify_polygons_ex(*this, true)) {
         // contour
         std::vector<p2t::Point*> ContourPoints;
-        
+
         Polygon contour = ex.contour;
         contour.remove_duplicate_points();
         for (const Point &point : contour.points) {
@@ -611,17 +611,17 @@ ExPolygon::triangulate_p2t(Polygons* polygons) const
                 (point.x - prev.x) > 0 ? point.x-- : point.x++;
                 (point.y - prev.y) > 0 ? point.y-- : point.y++;
                 prev = point;
-                
+
                 // will be destructed in SweepContext::~SweepContext
                 points.push_back(new p2t::Point(point.x, point.y));
             }
             cdt.AddHole(points);
         }
-        
+
         // perform triangulation
         cdt.Triangulate();
         std::vector<p2t::Triangle*> triangles = cdt.GetTriangles();
-        
+
         for (p2t::Triangle* triangle : triangles) {
             Polygon p;
             for (int i = 0; i <= 2; ++i) {
@@ -630,7 +630,7 @@ ExPolygon::triangulate_p2t(Polygons* polygons) const
             }
             polygons->push_back(p);
         }
-        
+
         for (p2t::Point* it : ContourPoints)
             delete it;
     }
