@@ -42,10 +42,6 @@ if(MINGW)
     add_compile_options(-Wa,-mbig-obj)
 endif()
 
-if(Enable_GUI)
-    add_compile_options(-DUSE_WX)
-endif(Enable_GUI)
-
 if($ENV{TRAVIS})
     if($ENV{TRAVIS} STREQUAL "true")
         message(STATUS "Building on Travis-CI.")
@@ -91,12 +87,6 @@ endif(COVERAGE)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# IF(CMAKE_HOST_APPLE)
-#     # add_compile_options(-stdlib=libc++ -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_NO_CXX11_RVALUE_REFERENCES -DBOOST_THREAD_USES_MOVE)
-#     set(CMAKE_EXE_LINKER_FLAGS "-framework IOKit -framework CoreFoundation -lc++")
-# ENDIF(CMAKE_HOST_APPLE)
-
-
 if(SLIC3R_STATIC)
     set(Boost_USE_STATIC_LIBS ON)
     set(Boost_USE_STATIC_RUNTIME ON)
@@ -109,10 +99,8 @@ find_package(Threads REQUIRED)
 find_package(Boost REQUIRED )
 
 set(LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/xssrc/)
-set(GUI_LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/GUI/)
 
 set(TESTDIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
-set(GUI_TESTDIR ${CMAKE_CURRENT_SOURCE_DIR}/test/GUI/)
 
 # directory that contains the dependent non-source files, like models and configurations
 set(TESTFILE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/inputs/)
@@ -282,9 +270,8 @@ target_compile_options(poly2tri PUBLIC -w)
 
 
 set(SLIC3R_TEST_SOURCES
-    ${TESTDIR}/test_harness.cpp
     ${TESTDIR}/test_data.cpp
-    ${TESTDIR}/dummymain.cpp
+    ${TESTDIR}/main.cpp
     ${TESTDIR}/libslic3r/test_config.cpp
     ${TESTDIR}/libslic3r/test_fill.cpp
     ${TESTDIR}/libslic3r/test_flow.cpp
@@ -352,13 +339,6 @@ set(LIBSLIC3R_DEPENDS
     Catch2::Catch2
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
-)
-
-set(SLIC3R_GUI_INCLUDES
-    ${LIBDIR}/libslic3r
-    ${LIBDIR}/slic3r/GUI
-    ${GUI_LIBDIR}
-    ${OPENGL_INCLUDE_DIR}
 )
 
 find_package(Catch2 CONFIG REQUIRED)
