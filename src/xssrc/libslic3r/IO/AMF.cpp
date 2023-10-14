@@ -773,9 +773,10 @@ bool extract_model_from_archive(mz_zip_archive &archive, const mz_zip_archive_fi
                                (file_ofs + n == data->stat.m_uncomp_size) ? 1 : 0))
                 {
                     char error_buf[1024];
-                    ::sprintf(error_buf, "Error (%s) while parsing '%s' at line %d",
-                              XML_ErrorString(XML_GetErrorCode(data->parser)),
-                              data->stat.m_filename, (int)XML_GetCurrentLineNumber(data->parser));
+                    std::snprintf(
+                        error_buf, sizeof(error_buf), "Error (%s) while parsing '%s' at line %d",
+                        XML_ErrorString(XML_GetErrorCode(data->parser)), data->stat.m_filename,
+                        (int)XML_GetCurrentLineNumber(data->parser));
                     throw Slic3r::FileIOError(error_buf);
                 }
 

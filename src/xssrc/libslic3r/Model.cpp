@@ -464,8 +464,8 @@ ModelObject::ModelObject(Model *model) : part_number(-1), _bounding_box_valid(fa
 ModelObject::ModelObject(Model *model, const ModelObject &other, bool copy_volumes) :
     name(other.name), input_file(other.input_file), instances(), volumes(), config(other.config),
     layer_height_ranges(other.layer_height_ranges), part_number(other.part_number),
-    layer_height_spline(other.layer_height_spline), trafo_obj(other.trafo_obj),
-    _bounding_box(other._bounding_box), _bounding_box_valid(other._bounding_box_valid), model(model)
+    layer_height_spline(other.layer_height_spline), _bounding_box(other._bounding_box),
+    _bounding_box_valid(other._bounding_box_valid), model(model), trafo_obj(other.trafo_obj)
 {
     if (copy_volumes)
     {

@@ -146,7 +146,7 @@ add_library(ZipArchive STATIC
 add_library(miniz STATIC
     ${LIBDIR}/miniz/miniz.c
 )
-target_compile_features(ZipArchive PUBLIC cxx_std_11)
+target_compile_features(ZipArchive PUBLIC cxx_std_20)
 target_include_directories(ZipArchive PUBLIC ${COMMON_INCLUDES})
 target_compile_options(ZipArchive PUBLIC -w)
 
@@ -214,7 +214,7 @@ add_library(libslic3r STATIC
     ${LIBDIR}/libslic3r/miniz_extension.cpp
     ${LIBDIR}/libslic3r/thread_group.h
 )
-target_compile_features(libslic3r PUBLIC cxx_std_11)
+target_compile_features(libslic3r PUBLIC cxx_std_20)
 target_include_directories(libslic3r SYSTEM PUBLIC ${SLIC3R_INCLUDES})
 target_include_directories(libslic3r PUBLIC ${LIBSLIC3R_INCLUDES})
 if (BOOST_NOWIDE_FOUND)
@@ -241,7 +241,7 @@ target_compile_options(admesh PUBLIC -w)
 
 
 add_library(clipper STATIC ${LIBDIR}/clipper.cpp)
-target_compile_features(clipper PUBLIC cxx_std_11)
+target_compile_features(clipper PUBLIC cxx_std_20)
 target_include_directories(clipper PUBLIC ${COMMON_INCLUDES})
 target_compile_options(clipper PUBLIC -w)
 
@@ -250,7 +250,7 @@ add_library(expat STATIC
     ${LIBDIR}/expat/xmlrole.c
     ${LIBDIR}/expat/xmltok.c
 )
-target_compile_features(expat PUBLIC cxx_std_11)
+target_compile_features(expat PUBLIC cxx_std_20)
 target_include_directories(expat PUBLIC ${EXPAT_INCLUDES})
 target_compile_options(expat PUBLIC -w)
 
