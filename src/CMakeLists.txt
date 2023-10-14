@@ -91,10 +91,10 @@ endif(COVERAGE)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-IF(CMAKE_HOST_APPLE)
-    add_compile_options(-stdlib=libc++ -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_NO_CXX11_RVALUE_REFERENCES -DBOOST_THREAD_USES_MOVE)
-    set(CMAKE_EXE_LINKER_FLAGS "-framework IOKit -framework CoreFoundation -lc++")
-ENDIF(CMAKE_HOST_APPLE)
+# IF(CMAKE_HOST_APPLE)
+#     # add_compile_options(-stdlib=libc++ -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_NO_CXX11_RVALUE_REFERENCES -DBOOST_THREAD_USES_MOVE)
+#     set(CMAKE_EXE_LINKER_FLAGS "-framework IOKit -framework CoreFoundation -lc++")
+# ENDIF(CMAKE_HOST_APPLE)
 
 
 if(SLIC3R_STATIC)
@@ -280,29 +280,11 @@ add_library(poly2tri STATIC
 target_include_directories(poly2tri PUBLIC ${COMMON_INCLUDES})
 target_compile_options(poly2tri PUBLIC -w)
 
-set(UI_TEST_SOURCES
-    slic3r.cpp
-    ${GUI_TESTDIR}/testableframe.cpp
-    ${GUI_TESTDIR}/test_harness_gui.cpp
-    ${GUI_TESTDIR}/test_field_checkbox.cpp
-    ${GUI_TESTDIR}/test_field_spinctrl.cpp
-    ${GUI_TESTDIR}/test_field_textbox.cpp
-    ${GUI_TESTDIR}/test_field_choice.cpp
-    ${GUI_TESTDIR}/test_field_numchoice.cpp
-    ${GUI_TESTDIR}/test_field_point.cpp
-    ${GUI_TESTDIR}/test_field_point3.cpp
-    ${GUI_TESTDIR}/test_field_colorpicker.cpp
-    ${GUI_TESTDIR}/test_field_slider.cpp
-    ${GUI_TESTDIR}/test_optionsgroup.cpp
-    ${GUI_TESTDIR}/test_preset.cpp
-    ${GUI_TESTDIR}/test_preset_chooser.cpp
-    ${GUI_TESTDIR}/test_misc_ui.cpp
-    ${GUI_TESTDIR}/test_cli.cpp
-)
 
 set(SLIC3R_TEST_SOURCES
     ${TESTDIR}/test_harness.cpp
     ${TESTDIR}/test_data.cpp
+    ${TESTDIR}/dummymain.cpp
     ${TESTDIR}/libslic3r/test_config.cpp
     ${TESTDIR}/libslic3r/test_fill.cpp
     ${TESTDIR}/libslic3r/test_flow.cpp
@@ -367,6 +349,7 @@ set(LIBSLIC3R_DEPENDS
     poly2tri
     ZipArchive
     miniz
+    Catch2::Catch2
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )

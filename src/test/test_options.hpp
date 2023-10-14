@@ -2,7 +2,7 @@
 #include <string>
 
 /// Directory path, passed in from the outside, for the path to the test inputs dir.
-constexpr auto* testfile_dir {"/home/kangyucheng/Documents/CODE/Slic3r_new/src/test/inputs/"};
+constexpr auto* testfile_dir {"/Users/kangyucheng/Documents/Slic3r_new/src/test/inputs/"};
 
 inline std::string testfile(std::string filename) {
     std::string result;

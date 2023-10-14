@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <string>
 #include "test_data.hpp"
 #include "libslic3r.h"
